@@ -131,7 +131,8 @@ Quiz: What's the main idea behind a SIP?
 - **Phase 7 (Backend Deployment)**: COMPLETE & LIVE.
   - Backend deployed to Render at `https://finfluence-d420.onrender.com`.
   - Swagger UI live at `https://finfluence-d420.onrender.com/docs`.
-- **Phase 8 (Frontend Vercel Deployment)**: READY FOR USER DEPLOY.
+- **Phase 8 (Frontend Vercel Deployment)**: READY & VERIFIED.
+  - Removed root `vercel.json` to eliminate path doubling (`frontend/frontend/package.json`) and allow native Next.js framework detection in Vercel.
   - Code pushed to GitHub repository `https://github.com/tirthm2538-beep/finfluence`.
   - Frontend environment variables configured to point to Render backend.
   - `frontend/.env.example` thoroughly documented with Supabase and Render keys.
