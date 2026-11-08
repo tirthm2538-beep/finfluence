@@ -6,6 +6,9 @@ crypto, stock market, etc.) through short, swipeable "story cards" with a fun,
 meme-friendly tone and quick quizzes — built to connect science, arts, and 
 commerce students, and to pitch to a software/trading company CEO.
 
+## Repository
+- GitHub: https://github.com/tirthm2538-beep/finfluence (Branch: `main`)
+
 ## Tech stack
 - Frontend: Next.js (React 19, App Router) + Tailwind CSS v4 + Lucide Icons — swipeable card/story UI (Port 3000 locally, deploying to Vercel)
 - Backend: Python + FastAPI + Pydantic v2 + Uvicorn — live on Render at `https://finfluence-d420.onrender.com`
@@ -86,7 +89,7 @@ commerce students, and to pitch to a software/trading company CEO.
   - Full pitch guide created in `PITCH_DECK_GUIDE.md` detailing the 3-minute live walkthrough, student CAC reduction thesis, and objection handling for brokerage executives.
 - Deployment Status:
   - Backend: **LIVE** on Render at `https://finfluence-d420.onrender.com`.
-  - Frontend: Prepared for Vercel deployment with monorepo root settings, environment documentation in `.env.example`, and clean production compilation (`npm run build` passing in 1.9s).
+  - Frontend: Committed to GitHub, ready for 1-click Vercel import with Root Directory set to `frontend`.
 
 ## Locked example card (template for all cards)
 Concept: What is a SIP?
@@ -129,6 +132,7 @@ Quiz: What's the main idea behind a SIP?
   - Backend deployed to Render at `https://finfluence-d420.onrender.com`.
   - Swagger UI live at `https://finfluence-d420.onrender.com/docs`.
 - **Phase 8 (Frontend Vercel Deployment)**: READY FOR USER DEPLOY.
+  - Code pushed to GitHub repository `https://github.com/tirthm2538-beep/finfluence`.
   - Frontend environment variables configured to point to Render backend.
   - `frontend/.env.example` thoroughly documented with Supabase and Render keys.
   - Production build (`npm run build`) compiling cleanly in 1.9s with 0 errors.
@@ -136,5 +140,9 @@ Quiz: What's the main idea behind a SIP?
   - Executive pitch deck and demo script written in `PITCH_DECK_GUIDE.md`.
 
 ## Next steps
-1. **Deploy Frontend to Vercel**: Connect GitHub repository to Vercel, set Root Directory to `frontend`, add the 3 environment variables, and deploy.
-2. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for the live meeting and demo walkthrough.
+1. **Deploy Frontend on Vercel**:
+   - Go to [vercel.com](https://vercel.com) -> New Project -> Import `tirthm2538-beep/finfluence`.
+   - Set Root Directory to `frontend`.
+   - Add the 3 environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_API_URL`).
+   - Click Deploy.
+2. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for your live presentation and demonstration!
