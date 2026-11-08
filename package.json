@@ -1,0 +1,17 @@
+{
+  "name": "finfluence-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FinFluence: Gen Z Financial Literacy App",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "backend": ".\\backend\\venv\\Scripts\\python -m uvicorn main:app --app-dir backend --reload --port 8000",
+    "dev:all": "concurrently -n \"frontend,backend\" -c \"cyan.bold,magenta.bold\" \"npm run dev\" \"npm run backend\"",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

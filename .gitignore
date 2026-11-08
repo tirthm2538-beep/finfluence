@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/venv/
+venv/
+env/
+
+# Production build artifacts
+.next/
+frontend/.next/
+out/
+build/
+dist/
+
+# Python caches
+__pycache__/
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Environment files & secrets (ignore actual secret files, but keep .env.example)
+.env
+.env.local
+.env*.local
+frontend/.env.local
+backend/.env
+!.env.example
+!frontend/.env.example
+!backend/.env.example
+
+# Temporary / Scratch
+*.png
+*.log
+.DS_Store
+Thumbs.db

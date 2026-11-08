@@ -1,0 +1,873 @@
+import { StoryCardData } from '../types/card';
+
+export const ALL_CARDS: StoryCardData[] = [
+  // ==========================================
+  // TRACK 1: CORE FINANCE LITERACY
+  // ==========================================
+  {
+    id: 'sip-101',
+    conceptNumber: 1,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'What is a SIP?',
+    tag: 'Investing Basics',
+    readTime: '45 sec read',
+    hook: "You know how you don't notice ₹50 missing from your wallet, but you'd definitely notice ₹5,000 gone in one shot?",
+    explanation:
+      "A SIP (Systematic Investment Plan) is investing a small fixed amount every month into a mutual fund instead of a lump sum. Small amounts feel like nothing, but compounding over years turns it into real money.",
+    analogy:
+      "It's like a gym membership for your money — results come from showing up consistently, not from one big effort.",
+    analogyIcon: 'dumbbell',
+    quiz: {
+      question: "What's the main idea behind a SIP?",
+      options: [
+        {
+          id: 'sip-a',
+          label: 'A',
+          text: 'Invest a huge amount once',
+          isCorrect: false,
+          explanation: 'That is a lump-sum investment, which carries higher market-timing risk.',
+        },
+        {
+          id: 'sip-b',
+          label: 'B',
+          text: 'Invest small amounts regularly',
+          isCorrect: true,
+          explanation: 'Spot on! Consistency removes the stress of timing market peaks and troughs.',
+        },
+        {
+          id: 'sip-c',
+          label: 'C',
+          text: 'Only invest when the market is doing well',
+          isCorrect: false,
+          explanation: 'A SIP automatically buys more units when markets dip — that is rupee-cost averaging!',
+        },
+      ],
+      correctOptionId: 'sip-b',
+      takeaway: 'Automation + consistency = wealth without the stress.',
+    },
+  },
+  {
+    id: 'compound-interest-102',
+    conceptNumber: 2,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Compound Interest',
+    tag: 'Wealth Multiplier',
+    readTime: '50 sec read',
+    hook: "Would you rather take ₹1 Crore in cash right now, or a single ₹1 coin that doubles every day for 31 days?",
+    explanation:
+      "Compound interest is earning interest on your interest. In the beginning, growth looks painfully slow, but over 10-20 years it turns modest savings into exponential wealth.",
+    analogy:
+      "It's like a snowball rolling down a mountain — tiny at the top, but an unstoppable avalanche by the time it reaches the bottom.",
+    analogyIcon: 'snow',
+    quiz: {
+      question: "Why is starting early so crucial for compounding?",
+      options: [
+        {
+          id: 'ci-a',
+          label: 'A',
+          text: 'Banks give higher interest rates to younger investors',
+          isCorrect: false,
+          explanation: 'Interest rates are identical regardless of your age.',
+        },
+        {
+          id: 'ci-b',
+          label: 'B',
+          text: 'Time is the exponent that creates exponential curve acceleration',
+          isCorrect: true,
+          explanation: 'Spot on! Mathematically, extra years matter even more than larger monthly sums.',
+        },
+        {
+          id: 'ci-c',
+          label: 'C',
+          text: 'You run out of investment slots if you wait',
+          isCorrect: false,
+          explanation: 'Markets are always open, but wasted years can never be recovered.',
+        },
+      ],
+      correctOptionId: 'ci-b',
+      takeaway: 'Starting at 21 instead of 31 can literally double your final retirement corpus.',
+    },
+  },
+  {
+    id: 'mutual-funds-103',
+    conceptNumber: 3,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Mutual Funds Explained',
+    tag: 'Diversification',
+    readTime: '45 sec read',
+    hook: "Ever tried ordering food when you want pizza, your friend wants momos, and someone else wants biryani? A buffet solves that in one plate.",
+    explanation:
+      "A mutual fund collects money from thousands of everyday people and hires a professional fund manager to invest that giant pool across dozens of top company stocks and bonds.",
+    analogy:
+      "Instead of buying one expensive whole fruit tree that might get diseased, you buy a pre-cut mixed fruit salad with 50 different fruits.",
+    analogyIcon: 'pie-chart',
+    quiz: {
+      question: "What is the primary advantage of a mutual fund for beginners?",
+      options: [
+        {
+          id: 'mf-a',
+          label: 'A',
+          text: 'Instant diversification managed by full-time professionals',
+          isCorrect: true,
+          explanation: 'Exactly! For ₹500 you get fractional exposure to 50+ blue-chip companies.',
+        },
+        {
+          id: 'mf-b',
+          label: 'B',
+          text: 'Guaranteed 50% returns every single year without risk',
+          isCorrect: false,
+          explanation: 'No mutual fund guarantees returns; market risks always exist.',
+        },
+        {
+          id: 'mf-c',
+          label: 'C',
+          text: 'You get to call the CEO of every company you hold',
+          isCorrect: false,
+          explanation: 'Fund managers handle all portfolio management decisions on your behalf.',
+        },
+      ],
+      correctOptionId: 'mf-a',
+      takeaway: 'Mutual funds let you own the entire market without tracking 50 individual balance sheets.',
+    },
+  },
+  {
+    id: 'inflation-104',
+    conceptNumber: 4,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Inflation: The Silent Tax',
+    tag: 'Purchasing Power',
+    readTime: '45 sec read',
+    hook: "Remember when a packet of chips or a movie ticket was half today's price? Your money did not shrink in size, but its power did.",
+    explanation:
+      "Inflation is the rate at which general prices increase over time. If inflation is 6% per year and your money sits in a 3% savings bank account, you are actually losing 3% of your purchasing power every single year.",
+    analogy:
+      "Keeping cash under your mattress or in a low-interest account is like holding an ice cube on a warm day — it slowly melts away without you touching it.",
+    analogyIcon: 'snow',
+    quiz: {
+      question: "If inflation is 6% and your bank pays 3% interest, what happens to your money?",
+      options: [
+        {
+          id: 'inf-a',
+          label: 'A',
+          text: 'You gain 3% real purchasing power each year',
+          isCorrect: false,
+          explanation: 'Inflation grew faster than your interest rate!',
+        },
+        {
+          id: 'inf-b',
+          label: 'B',
+          text: 'You lose 3% real purchasing power each year',
+          isCorrect: true,
+          explanation: 'Correct! Real Return = Interest Rate (3%) minus Inflation (6%) = -3%.',
+        },
+        {
+          id: 'inf-c',
+          label: 'C',
+          text: 'Nothing changes because ₹100 is still ₹100',
+          isCorrect: false,
+          explanation: 'The paper note is the same, but the quantity of goods it can buy drops.',
+        },
+      ],
+      correctOptionId: 'inf-b',
+      takeaway: 'Investing is not about becoming ultra-rich; it is first about beating inflation.',
+    },
+  },
+  {
+    id: 'emergency-fund-105',
+    conceptNumber: 5,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'The Emergency Fund',
+    tag: 'Financial Safety',
+    readTime: '40 sec read',
+    hook: "What happens if your laptop dies the week before exam submissions or you have an unexpected medical bill tomorrow?",
+    explanation:
+      "An emergency fund is 3 to 6 months of essential living expenses parked in a safe, liquid account. It exists for unexpected curveballs so you never have to take high-interest loans or sell long-term investments during a crash.",
+    analogy:
+      "It is the spare tire in the trunk of your car. You do not drive on it every day, but without it, a single flat tire ruins your entire journey.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "Where should your emergency fund be kept?",
+      options: [
+        {
+          id: 'ef-a',
+          label: 'A',
+          text: 'In high-risk volatile crypto tokens for maximum return',
+          isCorrect: false,
+          explanation: 'If crypto dips 40% the day you need cash, your safety net is gone.',
+        },
+        {
+          id: 'ef-b',
+          label: 'B',
+          text: 'In a safe, easily accessible savings account or liquid fund',
+          isCorrect: true,
+          explanation: 'Bingo! Emergency money prioritizes liquidity and safety over high returns.',
+        },
+        {
+          id: 'ef-c',
+          label: 'C',
+          text: 'Locked in a 10-year real estate property',
+          isCorrect: false,
+          explanation: 'You cannot sell a flat in 2 hours to pay a hospital deposit.',
+        },
+      ],
+      correctOptionId: 'ef-b',
+      takeaway: 'Rule #1 of investing: secure your defense before playing offense.',
+    },
+  },
+  {
+    id: 'credit-score-106',
+    conceptNumber: 6,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Credit Score & CIBIL',
+    tag: 'Borrowing Power',
+    readTime: '45 sec read',
+    hook: "Would you lend ₹10,000 to a friend who always 'forgets' to pay you back, or to the friend who UPIs you their split before the bill arrives?",
+    explanation:
+      "Your credit score (like CIBIL in India, scored from 300 to 900) is your financial trustworthiness score. Banks inspect it whenever you apply for a credit card, bike loan, or home loan. Scores above 750 get instant approvals and lower interest rates.",
+    analogy:
+      "It is your academic GPA, but for borrowing money. A few missed assignments (late EMI payments) will drag down your entire cumulative grade.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "What is the fastest way to damage your credit score?",
+      options: [
+        {
+          id: 'cs-a',
+          label: 'A',
+          text: 'Missing credit card or EMI due dates repeatedly',
+          isCorrect: true,
+          explanation: 'Spot on! Payment history accounts for roughly 35% of your total credit score calculation.',
+        },
+        {
+          id: 'cs-b',
+          label: 'B',
+          text: 'Having a debit card from more than one bank',
+          isCorrect: false,
+          explanation: 'Debit cards use your own money and do not impact credit scores at all.',
+        },
+        {
+          id: 'cs-c',
+          label: 'C',
+          text: 'Checking your bank balance too frequently on UPI apps',
+          isCorrect: false,
+          explanation: 'Checking your balance has zero relationship with credit bureaus.',
+        },
+      ],
+      correctOptionId: 'cs-a',
+      takeaway: 'Always pay credit card dues in full before the due date, never just the minimum.',
+    },
+  },
+  {
+    id: 'emi-trap-107',
+    conceptNumber: 7,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'The EMI & BNPL Trap',
+    tag: 'Debt Awareness',
+    readTime: '50 sec read',
+    hook: "'Only ₹2,499/month for 24 months!' sounds cheap for a ₹50,000 gadget until you calculate what you actually end up paying.",
+    explanation:
+      "An EMI (Equated Monthly Installment) splits big purchases into monthly bites. But 'No Cost EMI' often includes hidden processing fees, GST on interest, or higher upfront prices. Stacking 4 different EMIs eats up your future salary before it even lands.",
+    analogy:
+      "EMIs are like eating heavy junk food on credit — it feels instantly satisfying right now, but gives you a chronic stomach ache every month for years.",
+    analogyIcon: 'dumbbell',
+    quiz: {
+      question: "What is the biggest risk of having multiple EMIs as a young earner?",
+      options: [
+        {
+          id: 'emi-a',
+          label: 'A',
+          text: 'You lock up your monthly cash flow, leaving zero room to save or invest',
+          isCorrect: true,
+          explanation: 'Exactly! Your future paychecks are already spent on past consumption.',
+        },
+        {
+          id: 'emi-b',
+          label: 'B',
+          text: 'The phone or gadget stops working after the first installment',
+          isCorrect: false,
+          explanation: 'Hardware works fine, but your financial peace of mind takes the hit.',
+        },
+        {
+          id: 'emi-c',
+          label: 'C',
+          text: 'Banks automatically close your savings account',
+          isCorrect: false,
+          explanation: 'Banks love EMIs because interest and fees make them significant profit.',
+        },
+      ],
+      correctOptionId: 'emi-a',
+      takeaway: 'If you cannot afford it twice in cash, think twice before buying it on EMI.',
+    },
+  },
+  {
+    id: 'risk-return-108',
+    conceptNumber: 8,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Risk vs Return',
+    tag: 'Core Principle',
+    readTime: '45 sec read',
+    hook: "If someone in your DMs promises you can double your money in 30 days guaranteed, they are either lying or about to take your money.",
+    explanation:
+      "In finance, risk and return are glued together. High potential returns always carry high potential risk of capital loss. Low-risk assets (like Government bonds or Fixed Deposits) offer modest, predictable returns.",
+    analogy:
+      "A fixed deposit is like walking on a paved sidewalk (safe, slow). High-growth tech stocks are like riding a roller coaster (thrilling, wild drops). There is no vehicle that goes 200 km/h with zero bumps.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "Which of these is a universal law of financial markets?",
+      options: [
+        {
+          id: 'rr-a',
+          label: 'A',
+          text: 'Higher potential returns always come with higher uncertainty and risk',
+          isCorrect: true,
+          explanation: 'Spot on! Any scheme promising huge returns with "zero risk" is a red flag.',
+        },
+        {
+          id: 'rr-b',
+          label: 'B',
+          text: 'Government bonds always outperform startup stocks over 30 years',
+          isCorrect: false,
+          explanation: 'Bonds provide stability, but equities have historically beaten bonds over decades.',
+        },
+        {
+          id: 'rr-c',
+          label: 'C',
+          text: 'You can eliminate all investment risk by trading only at night',
+          isCorrect: false,
+          explanation: 'Timing or hours have nothing to do with fundamental asset risk.',
+        },
+      ],
+      correctOptionId: 'rr-a',
+      takeaway: 'Know your risk tolerance before choosing where your hard-earned money sleeps.',
+    },
+  },
+  {
+    id: 'diversification-109',
+    conceptNumber: 9,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Diversification',
+    tag: 'Portfolio Defense',
+    readTime: '40 sec read',
+    hook: "Imagine backing a single cricket batsman to score a century in every match — what happens the day he gets out on the very first ball?",
+    explanation:
+      "Diversification means spreading your capital across different asset classes (equity, debt, gold) and different sectors (IT, banking, healthcare). If one sector has a rough year, the others balance it out.",
+    analogy:
+      "Do not carry all your eggs in one single fragile basket. If the handle breaks, you lose breakfast for the entire month.",
+    analogyIcon: 'pie-chart',
+    quiz: {
+      question: "What does smart diversification achieve?",
+      options: [
+        {
+          id: 'div-a',
+          label: 'A',
+          text: 'It reduces portfolio volatility without sacrificing long-term returns',
+          isCorrect: true,
+          explanation: 'Correct! It prevents any single company failure from wiping out your wealth.',
+        },
+        {
+          id: 'div-b',
+          label: 'B',
+          text: 'It guarantees that every stock in your portfolio will hit an all-time high',
+          isCorrect: false,
+          explanation: 'Some stocks will dip while others rise; that is the whole balancing point.',
+        },
+        {
+          id: 'div-c',
+          label: 'C',
+          text: 'It allows you to avoid paying any taxes legally forever',
+          isCorrect: false,
+          explanation: 'Diversification is a risk management strategy, not a tax exemption loophole.',
+        },
+      ],
+      correctOptionId: 'div-a',
+      takeaway: 'Diversification is the only "free lunch" in investing.',
+    },
+  },
+  {
+    id: 'crypto-basics-110',
+    conceptNumber: 10,
+    track: 'core-finance',
+    trackTitle: 'Core Finance Literacy',
+    conceptTitle: 'Crypto: High Risk Frontier',
+    tag: 'Alternative Assets',
+    readTime: '45 sec read',
+    hook: "Bitcoin rallied from a few dollars to tens of thousands — but also crashed 70% multiple times in between.",
+    explanation:
+      "Cryptocurrencies operate on decentralized blockchain networks rather than central bank reserves. While innovative, their price swings are wild and speculative. In India, crypto gains face a flat 30% tax plus 1% TDS, with zero set-off for losses.",
+    analogy:
+      "Think of gold as a heavy, dependable anchor ship; crypto is more like a jet-ski with a nitro boost — crazy fast, but one wave can flip you upside down.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "How should a beginner treat crypto in a portfolio?",
+      options: [
+        {
+          id: 'cry-a',
+          label: 'A',
+          text: 'As an ultra-high-risk asset where you only put what you can afford to lose',
+          isCorrect: true,
+          explanation: 'Exactly right! Most experts recommend keeping crypto to under 5% of your total portfolio.',
+        },
+        {
+          id: 'cry-b',
+          label: 'B',
+          text: 'As a replacement for your bank emergency fund',
+          isCorrect: false,
+          explanation: 'Never put emergency cash in volatile assets.',
+        },
+        {
+          id: 'cry-c',
+          label: 'C',
+          text: 'As a guaranteed government-backed retirement scheme',
+          isCorrect: false,
+          explanation: 'Crypto has no government guarantee or sovereign backing.',
+        },
+      ],
+      correctOptionId: 'cry-a',
+      takeaway: 'Curiosity is great, but never risk rent money on speculative volatility.',
+    },
+  },
+
+  // ==========================================
+  // TRACK 2: STOCK MARKET LITERACY (EDUCATION ONLY)
+  // ==========================================
+  {
+    id: 'stock-basics-201',
+    conceptNumber: 11,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'What is a Stock?',
+    tag: 'Ownership',
+    readTime: '40 sec read',
+    hook: "Every time you order biryani on Zomato or stream songs on Spotify, someone is pocketing profits. Why not get a cut?",
+    explanation:
+      "Buying a stock means purchasing a tiny, fractional ownership stake in an actual company. If the company grows revenues and expands, your ownership piece increases in value.",
+    analogy:
+      "Imagine you and 4 friends pool money to open a high-end food truck. You own 20% of every burger sold and 20% of the brand's worth.",
+    analogyIcon: 'pie-chart',
+    quiz: {
+      question: "When you buy 1 share of a listed company, what do you hold?",
+      options: [
+        {
+          id: 'sb-a',
+          label: 'A',
+          text: 'A loan certificate that the company promises to pay back',
+          isCorrect: false,
+          explanation: 'That is a bond or debenture. Stocks represent ownership, not debt.',
+        },
+        {
+          id: 'sb-b',
+          label: 'B',
+          text: 'A genuine fractional ownership stake in the enterprise',
+          isCorrect: true,
+          explanation: 'Exactly right! You become a legal shareholder in their balance sheet.',
+        },
+        {
+          id: 'sb-c',
+          label: 'C',
+          text: 'A casino chip that only depends on daily hype',
+          isCorrect: false,
+          explanation: 'Short-term prices fluctuate, but underlying stock value tracks real company earnings.',
+        },
+      ],
+      correctOptionId: 'sb-b',
+      takeaway: 'Stocks are shares of businesses, not lottery tickets.',
+    },
+  },
+  {
+    id: 'nse-bse-202',
+    conceptNumber: 12,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'NSE vs BSE',
+    tag: 'Exchanges',
+    readTime: '45 sec read',
+    hook: "If you want to buy a pair of sneakers, you can order from Amazon or Flipkart. India's stock market works the same way.",
+    explanation:
+      "BSE (Bombay Stock Exchange) is Asia's oldest exchange founded in 1875. NSE (National Stock Exchange) was launched in 1992 and handles the highest daily trading volume. Both let you buy and sell Indian shares under the strict eye of SEBI.",
+    analogy:
+      "Think of BSE and NSE as two massive digital shopping malls on opposite sides of the street selling the exact same brands at virtually identical prices.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "Can you buy a share on NSE and sell it on BSE?",
+      options: [
+        {
+          id: 'ex-a',
+          label: 'A',
+          text: 'Yes, once the shares are credited to your Demat account',
+          isCorrect: true,
+          explanation: 'Spot on! Your Demat account is centralized (via NSDL/CDSL), so you can transact across either exchange.',
+        },
+        {
+          id: 'ex-b',
+          label: 'B',
+          text: 'No, shares bought on NSE can only ever exist on NSE',
+          isCorrect: false,
+          explanation: 'Inter-exchange trading is completely standard in India.',
+        },
+        {
+          id: 'ex-c',
+          label: 'C',
+          text: 'Only if the government grants you a special trading license',
+          isCorrect: false,
+          explanation: 'Any standard retail Demat/trading account can do this seamlessly.',
+        },
+      ],
+      correctOptionId: 'ex-a',
+      takeaway: 'NSE and BSE are marketplaces; your Demat account is your digital locker.',
+    },
+  },
+  {
+    id: 'nifty-sensex-203',
+    conceptNumber: 13,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Nifty 50 & Sensex',
+    tag: 'Market Benchmarks',
+    readTime: '45 sec read',
+    hook: "When news anchors say 'The market crashed 500 points today!', what market are they actually talking about?",
+    explanation:
+      "Instead of checking 5,000 individual company stocks, we use benchmark indices. The Sensex tracks the top 30 established companies on the BSE. The Nifty 50 tracks the top 50 blue-chip companies on the NSE across 13 major economic sectors.",
+    analogy:
+      "It is the thermometer of the Indian economy. If the top 50 companies are thriving, the thermometer reading goes up; if they struggle, it drops.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "What does the '50' in Nifty 50 stand for?",
+      options: [
+        {
+          id: 'nif-a',
+          label: 'A',
+          text: 'It is re-evaluated every 50 minutes',
+          isCorrect: false,
+          explanation: 'The index recalculates continuously during market hours.',
+        },
+        {
+          id: 'nif-b',
+          label: 'B',
+          text: 'The 50 largest, most liquid Indian companies included in the index',
+          isCorrect: true,
+          explanation: 'Correct! Think Reliance, TCS, HDFC Bank, Infosys, and 46 other industry leaders.',
+        },
+        {
+          id: 'nif-c',
+          label: 'C',
+          text: 'The 50 states and union territories of India',
+          isCorrect: false,
+          explanation: 'It is strictly a company market-cap metric.',
+        },
+      ],
+      correctOptionId: 'nif-b',
+      takeaway: 'When you buy a Nifty 50 Index Fund, you are effectively betting on India’s top 50 giants.',
+    },
+  },
+  {
+    id: 'ipo-basics-204',
+    conceptNumber: 14,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'What is an IPO?',
+    tag: 'Primary Market',
+    readTime: '45 sec read',
+    hook: "Ever notice the hype when a famous startup finally announces it is 'going public'?",
+    explanation:
+      "An IPO (Initial Public Offering) is the first time a private company sells its shares to the general public to raise money for expansion or debt payoff. Before an IPO, only founders and venture capitalists own shares.",
+    analogy:
+      "It is like a band going from performing in underground basement gigs to releasing their debut album on global streaming platforms for everyone to buy.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "Why do companies launch an IPO?",
+      options: [
+        {
+          id: 'ipo-a',
+          label: 'A',
+          text: 'To raise substantial capital from public investors to fuel growth',
+          isCorrect: true,
+          explanation: 'Spot on! Fresh capital allows companies to build factories, hire talent, and expand operations.',
+        },
+        {
+          id: 'ipo-b',
+          label: 'B',
+          text: 'Because the government forces every company to go public after 3 years',
+          isCorrect: false,
+          explanation: 'Many huge companies remain private voluntarily for decades.',
+        },
+        {
+          id: 'ipo-c',
+          label: 'C',
+          text: 'To avoid filing any balance sheet disclosures to the public',
+          isCorrect: false,
+          explanation: 'Public companies actually face much stricter quarterly audit disclosures.',
+        },
+      ],
+      correctOptionId: 'ipo-a',
+      takeaway: 'IPO hype is common, but smart investors check fundamentals and valuation first.',
+    },
+  },
+  {
+    id: 'bull-bear-205',
+    conceptNumber: 15,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Bull vs Bear Market',
+    tag: 'Market Cycles',
+    readTime: '40 sec read',
+    hook: "Why are Wall Street and Dalal Street obsessed with bulls and bears? It is all in the way they attack.",
+    explanation:
+      "A Bull market means optimism is high, corporate earnings are growing, and stock prices are rising (a bull thrusts its horns upwards). A Bear market means widespread pessimism, falling prices of 20%+ from peaks (a bear swipes its paws downward).",
+    analogy:
+      "Think of summer vs winter. Both seasons are completely natural and inevitable. Smart investors dress for the weather instead of panicking when winter arrives.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "How does a 'Bear' market get its name?",
+      options: [
+        {
+          id: 'bb-a',
+          label: 'A',
+          text: 'From the way a bear attacks by swiping its paws downward',
+          isCorrect: true,
+          explanation: 'Exact origin! Bulls thrust horns UP; bears swipe claws DOWN.',
+        },
+        {
+          id: 'bb-b',
+          label: 'B',
+          text: 'Because stock exchanges were historically built near forest reserves',
+          isCorrect: false,
+          explanation: 'Just a popular financial fable!',
+        },
+        {
+          id: 'bb-c',
+          label: 'C',
+          text: 'Because investors hibernate and trading is legally closed',
+          isCorrect: false,
+          explanation: 'Markets remain open every working day during bear markets.',
+        },
+      ],
+      correctOptionId: 'bb-a',
+      takeaway: 'Bear markets are where patient long-term investors find great companies on sale.',
+    },
+  },
+  {
+    id: 'candlesticks-206',
+    conceptNumber: 16,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Candlestick Basics',
+    tag: 'Technical Analysis',
+    readTime: '50 sec read',
+    hook: "Looking at trading charts looks like an intimidating matrix of red and green bars until someone shows you the 4 secret numbers.",
+    explanation:
+      "Every single candlestick tells the story of price battle over a timeframe: Open, High, Low, and Close (OHLC). A Green candle means price closed higher than it opened (buyers won). A Red candle means price closed lower than it opened (sellers won). The thin lines (wicks) show intraday extreme highs and lows.",
+    analogy:
+      "It is a match summary of a tug-of-war game between Buyers (Bulls) and Sellers (Bears) recorded over a 15-minute or daily round.",
+    analogyIcon: 'pie-chart',
+    quiz: {
+      question: "On a standard chart, what does a GREEN candle signify?",
+      options: [
+        {
+          id: 'cs-a',
+          label: 'A',
+          text: 'The closing price was higher than the opening price',
+          isCorrect: true,
+          explanation: 'Spot on! Price pushed upward during that session.',
+        },
+        {
+          id: 'cs-b',
+          label: 'B',
+          text: 'The company CEO bought more shares personally',
+          isCorrect: false,
+          explanation: 'Candlesticks show general market trading action, not insider transactions.',
+        },
+        {
+          id: 'cs-c',
+          label: 'C',
+          text: 'The government gave a subsidy to that industry',
+          isCorrect: false,
+          explanation: 'Candles simply reflect supply and demand price prints.',
+        },
+      ],
+      correctOptionId: 'cs-a',
+      takeaway: 'Charts don’t predict the future; they map the footprints of past buyers and sellers.',
+    },
+  },
+  {
+    id: 'support-resistance-207',
+    conceptNumber: 17,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Support & Resistance',
+    tag: 'Price Action',
+    readTime: '45 sec read',
+    hook: "Notice how tennis balls always bounce off the floor and bounce back down from the ceiling?",
+    explanation:
+      "Support is a price level where buyers consistently step in to prevent the price from dropping further (the floor). Resistance is a price level where sellers consistently take profits, preventing the price from climbing higher (the ceiling).",
+    analogy:
+      "Imagine bouncing a rubber ball inside a room. The hardwood floor is Support; the ceiling plaster is Resistance. If you throw it hard enough to break the ceiling, the old ceiling becomes the new floor.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "What is 'Support' on a stock chart?",
+      options: [
+        {
+          id: 'sr-a',
+          label: 'A',
+          text: 'A price zone where buying demand is historically strong enough to stop declines',
+          isCorrect: true,
+          explanation: 'Correct! It acts like a price trampoline where buyers defend the level.',
+        },
+        {
+          id: 'sr-b',
+          label: 'B',
+          text: 'A 24/7 customer service phone line run by SEBI',
+          isCorrect: false,
+          explanation: 'Support is a chart price level, not customer support.',
+        },
+        {
+          id: 'sr-c',
+          label: 'C',
+          text: 'The maximum tax deduction you can claim under Section 80C',
+          isCorrect: false,
+          explanation: 'Section 80C is Indian income tax law, unrelated to chart levels.',
+        },
+      ],
+      correctOptionId: 'sr-a',
+      takeaway: 'Support and resistance are zones of collective market memory.',
+    },
+  },
+  {
+    id: 'trading-volume-208',
+    conceptNumber: 18,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Trading Volume',
+    tag: 'Market Liquidity',
+    readTime: '40 sec read',
+    hook: "Would you rather buy an apartment in a booming metro city center or in the middle of a desert where nobody buys or sells?",
+    explanation:
+      "Volume represents the total number of shares bought and sold during a given period. High volume means high liquidity — you can enter and exit trades in milliseconds without moving the price. Low volume means you might get stuck holding shares with zero buyers around.",
+    analogy:
+      "Volume is how loud the applause is in an auditorium. If a comedian makes a joke and one person golf-claps (low volume), it is unconvincing. If 5,000 people roar (high volume), the move has conviction.",
+    analogyIcon: 'compass',
+    quiz: {
+      question: "Why does high trading volume matter to everyday investors?",
+      options: [
+        {
+          id: 'vol-a',
+          label: 'A',
+          text: 'It ensures high liquidity so you can buy or sell instantly at fair market prices',
+          isCorrect: true,
+          explanation: 'Spot on! You can convert your position into cash within seconds.',
+        },
+        {
+          id: 'vol-b',
+          label: 'B',
+          text: 'It means the company dividend is guaranteed to increase tenfold',
+          isCorrect: false,
+          explanation: 'Volume measures share transactions, not company dividend payouts.',
+        },
+        {
+          id: 'vol-c',
+          label: 'C',
+          text: 'It automatically makes the stock price go up 5% every day',
+          isCorrect: false,
+          explanation: 'High volume can accompany both massive rallies and steep drops.',
+        },
+      ],
+      correctOptionId: 'vol-a',
+      takeaway: 'Never trade low-volume penny stocks; getting in is easy, getting out is painful.',
+    },
+  },
+  {
+    id: 'dividends-209',
+    conceptNumber: 19,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Dividends: Passive Cash Flow',
+    tag: 'Cash Returns',
+    readTime: '40 sec read',
+    hook: "Imagine owning a rental flat where the tenant sends rent straight to your bank account every quarter without you lifting a finger.",
+    explanation:
+      "When a profitable company earns surplus cash, it can either reinvest it in new projects or distribute a portion directly to shareholders as a Dividend. If you own 100 shares of a company paying a ₹10 dividend per share, ₹1,000 gets deposited into your bank account.",
+    analogy:
+      "Owning a dividend stock is like planting an apple tree: you benefit as the tree grows larger (capital appreciation), and you also harvest fresh apples every season (dividends).",
+    analogyIcon: 'pie-chart',
+    quiz: {
+      question: "What is a dividend?",
+      options: [
+        {
+          id: 'div-a',
+          label: 'A',
+          text: 'A cash payout made by a company to shareholders from its net profits',
+          isCorrect: true,
+          explanation: 'Exactly right! It is direct profit sharing with the owners of the company.',
+        },
+        {
+          id: 'div-b',
+          label: 'B',
+          text: 'A penalty tax that investors must pay when a company reports a loss',
+          isCorrect: false,
+          explanation: 'Investors never pay penalties for company losses.',
+        },
+        {
+          id: 'div-c',
+          label: 'C',
+          text: 'A discount voucher for online shopping',
+          isCorrect: false,
+          explanation: 'Dividends are credited as real currency directly to your bank account.',
+        },
+      ],
+      correctOptionId: 'div-a',
+      takeaway: 'Reinvesting dividends when you are young supercharges compound interest.',
+    },
+  },
+  {
+    id: 'investing-vs-trading-210',
+    conceptNumber: 20,
+    track: 'stock-market',
+    trackTitle: 'Stock Market Literacy',
+    conceptTitle: 'Investing vs Trading',
+    tag: 'Mindset',
+    readTime: '50 sec read',
+    hook: "Are you planting a mango orchard to harvest fruit for decades, or surfing a 10-second wave at the beach?",
+    explanation:
+      "Investing is long-term (years to decades), focused on company fundamentals, revenue growth, and compounding wealth. Trading is short-term (minutes to weeks), focused on price momentum and chart setups. According to SEBI data, over 90% of active retail intraday/F&O traders lose money.",
+    analogy:
+      "Investing is like adopting a puppy and raising it into a loyal dog over years. Day trading is like betting on which greyhound crosses the finish line in the next 30 seconds.",
+    analogyIcon: 'dumbbell',
+    quiz: {
+      question: "What does SEBI data show about active retail intraday & derivatives traders in India?",
+      options: [
+        {
+          id: 'ivt-a',
+          label: 'A',
+          text: 'Over 90% of retail traders end up making net losses after fees and taxes',
+          isCorrect: true,
+          explanation: 'Crucial fact! Frequent transactions, emotions, and leverage wipe out most retail traders.',
+        },
+        {
+          id: 'ivt-b',
+          label: 'B',
+          text: '100% of traders become crorepatis within 6 months',
+          isCorrect: false,
+          explanation: 'That is social media course-seller fiction, not mathematical reality.',
+        },
+        {
+          id: 'ivt-c',
+          label: 'C',
+          text: 'Trading and long-term investing have the exact same success rate',
+          isCorrect: false,
+          explanation: 'Long-term index investing historically has a near-100% positive success rate over 10+ year horizons.',
+        },
+      ],
+      correctOptionId: 'ivt-a',
+      takeaway: 'Wealth is built through long-term patient investing, not frantic daily gambling.',
+    },
+  },
+];
+
+export const SAMPLE_CARDS = ALL_CARDS;
