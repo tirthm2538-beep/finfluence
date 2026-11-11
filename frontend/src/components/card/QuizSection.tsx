@@ -29,71 +29,71 @@ export function QuizSection({
   const selectedOption = quiz.options.find((opt) => opt.id === selectedOptionId);
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-violet-500/15 via-slate-900/80 to-slate-950/90 border border-violet-500/35 p-2 sm:p-2.5 lg:p-4 shadow-sm hover:border-violet-500/50 transition-all duration-200">
+    <div className="relative overflow-hidden rounded-xl bg-white border border-emerald-600/25 p-2.5 sm:p-3 lg:p-4 shadow-xs transition-all duration-200 w-full min-w-0 max-w-full dark:bg-gradient-to-br dark:from-emerald-950/30 dark:via-slate-900/80 dark:to-slate-950/90 dark:border-emerald-500/35">
       {/* Header */}
       <div className="flex items-center justify-between mb-1.5 lg:mb-2.5">
         <div className="flex items-center gap-1.5">
-          <HelpCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-violet-400 flex-shrink-0" />
-          <span className="text-[9px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-wider text-violet-300">
+          <HelpCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
+          <span className="text-[10px] sm:text-[11px] lg:text-xs font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
             Quick Quiz Check
           </span>
         </div>
         {hasAnsweredCorrectly && (
-          <span className="text-[8px] sm:text-[9px] lg:text-xs font-semibold text-emerald-400 flex items-center gap-1 bg-emerald-500/15 px-1.5 lg:px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse">
-            <Sparkles className="w-2 h-2 lg:w-3 lg:h-3" /> +10 XP Earned
+          <span className="text-[9px] sm:text-[10px] lg:text-xs font-bold text-emerald-800 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse flex items-center gap-1 dark:text-emerald-300">
+            <Sparkles className="w-2.5 h-2.5 lg:w-3 lg:h-3" /> +10 XP Earned
           </span>
         )}
       </div>
 
       {/* Question */}
-      <p className="text-white font-semibold text-[10px] sm:text-[11px] lg:text-base mb-1.5 lg:mb-3 leading-snug lg:leading-relaxed break-words">
+      <p className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm lg:text-base mb-2 lg:mb-3 leading-snug lg:leading-relaxed break-words hyphens-auto">
         {quiz.question}
       </p>
 
       {/* Options */}
-      <div className="space-y-1 lg:space-y-2">
+      <div className="space-y-1.5 lg:space-y-2">
         {quiz.options.map((option) => {
           const isSelected = selectedOptionId === option.id;
 
           let optionStyle =
-            'bg-slate-800/70 border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:shadow-md';
+            'bg-[#faf8f2] border-[#e3decb] text-slate-800 hover:bg-[#f5f2e7] hover:border-emerald-600/40 dark:bg-slate-800/70 dark:border-slate-700/80 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:border-slate-600';
 
           if (isSelected) {
             if (option.isCorrect) {
               optionStyle =
-                'bg-emerald-500/20 border-emerald-500 text-emerald-100 shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-1 ring-emerald-500/50';
+                'bg-emerald-50 border-emerald-600 text-emerald-950 ring-1 ring-emerald-600/30 shadow-xs dark:bg-emerald-500/20 dark:border-emerald-500 dark:text-emerald-100 dark:shadow-[0_0_15px_rgba(16,185,129,0.3)]';
             } else {
               optionStyle =
-                'bg-rose-500/20 border-rose-500/80 text-rose-100 shadow-[0_0_15px_rgba(244,63,94,0.3)]';
+                'bg-rose-50 border-rose-500 text-rose-950 shadow-xs dark:bg-rose-500/20 dark:border-rose-500/80 dark:text-rose-100';
             }
           } else if (hasAnsweredCorrectly && option.isCorrect) {
             optionStyle =
-              'bg-emerald-500/15 border-emerald-500/50 text-emerald-200';
+              'bg-emerald-50/70 border-emerald-600/50 text-emerald-900 dark:bg-emerald-500/15 dark:border-emerald-500/50 dark:text-emerald-200';
           }
 
           return (
             <button
               key={option.id}
               onClick={() => handleSelect(option.id, option.isCorrect)}
-              className={`w-full text-left py-1 px-1.5 sm:py-1.5 sm:px-2 lg:py-2.5 lg:px-3.5 rounded-lg border transition-all duration-150 flex items-center gap-2 text-[9px] sm:text-[10px] lg:text-sm font-medium cursor-pointer active:scale-[0.99] ${optionStyle}`}
+              className={`w-full text-left py-2 px-2.5 sm:py-2.5 sm:px-3 lg:py-2.5 lg:px-3.5 rounded-lg border transition-all duration-150 flex items-center gap-2 text-xs sm:text-sm font-medium cursor-pointer active:scale-[0.99] min-w-0 ${optionStyle}`}
             >
               <span
-                className={`flex-shrink-0 w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-6 lg:h-6 rounded-md flex items-center justify-center text-[7px] sm:text-[8px] lg:text-xs font-bold transition-colors ${
+                className={`flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-md flex items-center justify-center text-[9px] sm:text-[10px] lg:text-xs font-black transition-colors ${
                   isSelected && option.isCorrect
-                    ? 'bg-emerald-500 text-slate-950 font-black'
+                    ? 'bg-emerald-600 text-white'
                     : isSelected && !option.isCorrect
-                    ? 'bg-rose-500 text-white font-black'
-                    : 'bg-slate-700/80 text-slate-300'
+                    ? 'bg-rose-600 text-white'
+                    : 'bg-[#e9e4d4] text-slate-700 dark:bg-slate-700/80 dark:text-slate-300'
                 }`}
               >
                 {option.label}
               </span>
-              <span className="flex-1 leading-tight break-words">{option.text}</span>
+              <span className="flex-1 leading-snug break-words hyphens-auto">{option.text}</span>
               {isSelected && option.isCorrect && (
-                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-5 lg:h-5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
               )}
               {isSelected && !option.isCorrect && (
-                <XCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-5 lg:h-5 text-rose-400 flex-shrink-0" />
+                <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-rose-600 dark:text-rose-400 flex-shrink-0" />
               )}
             </button>
           );
@@ -103,20 +103,20 @@ export function QuizSection({
       {/* Feedback Banner */}
       {selectedOption && (
         <div
-          className={`mt-1.5 lg:mt-3 p-1.5 lg:p-3 rounded-lg text-[9px] sm:text-[10px] lg:text-sm leading-tight border transition-all duration-200 ${
+          className={`mt-2 lg:mt-3 p-2 lg:p-3 rounded-lg text-xs sm:text-sm leading-snug border transition-all duration-200 ${
             selectedOption.isCorrect
-              ? 'bg-emerald-950/70 border-emerald-500/30 text-emerald-200'
-              : 'bg-rose-950/70 border-rose-500/30 text-rose-200'
+              ? 'bg-emerald-50 border-emerald-600/40 text-emerald-950 dark:bg-emerald-950/70 dark:border-emerald-500/30 dark:text-emerald-200'
+              : 'bg-rose-50 border-rose-500/40 text-rose-950 dark:bg-rose-950/70 dark:border-rose-500/30 dark:text-rose-200'
           }`}
         >
           <div className="flex items-start gap-1.5 lg:gap-2">
             {selectedOption.isCorrect ? (
-              <CheckCircle2 className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
             ) : (
-              <XCircle className="w-3 h-3 lg:w-4 lg:h-4 text-rose-400 mt-0.5 flex-shrink-0" />
+              <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 mt-0.5 flex-shrink-0" />
             )}
-            <div className="break-words">
-              <span className="font-bold mr-1">
+            <div className="break-words hyphens-auto">
+              <span className="font-extrabold mr-1">
                 {selectedOption.isCorrect ? 'Spot on! 🎯' : 'Not quite! 🤔'}
               </span>
               <span>{selectedOption.explanation}</span>

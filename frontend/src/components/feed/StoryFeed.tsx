@@ -27,7 +27,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
   const containerRef = useRef<HTMLDivElement>(null);
   const isProgrammaticScroll = useRef(false);
 
-  // Load user progress (from Supabase if authenticated, or localStorage if guest)
+  // Load user progress
   useEffect(() => {
     if (user) {
       loadUserProgress(user).then((p) => {
@@ -83,7 +83,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
     }
   };
 
-  // Keyboard navigation (ArrowUp, ArrowDown)
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
@@ -136,7 +136,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
   const activeCard = cards[currentIndex] || cards[0];
 
   return (
-    <div className="relative w-full h-full flex flex-col bg-slate-950 overflow-hidden select-none">
+    <div className="relative w-full max-w-full h-full flex flex-col bg-[var(--background)] overflow-hidden select-none">
       {/* Top Segmented Story Progress Bar */}
       <StoryProgressBar
         total={cards.length}
@@ -161,7 +161,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="relative flex-1 min-h-0 w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar"
+        className="relative flex-1 min-h-0 w-full max-w-full overflow-x-hidden overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar"
         style={{ scrollSnapType: 'y mandatory', WebkitOverflowScrolling: 'touch' }}
       >
         {cards.map((card, index) => {
@@ -171,7 +171,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
           return (
             <section
               key={card.id}
-              className="w-full h-full snap-start snap-always flex-shrink-0 flex flex-col justify-start relative overflow-hidden"
+              className="w-full max-w-full h-full snap-start snap-always flex-shrink-0 flex flex-col justify-start relative overflow-hidden"
               aria-label={`Story card ${index + 1}: ${card.conceptTitle}`}
             >
               <StoryCard
@@ -183,6 +183,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
                 onNextCard={handleNext}
                 onQuizComplete={() => handleQuizComplete(card.id, card.track)}
                 onToggleBookmark={() => handleToggleBookmark(card.id)}
+                isDesktopLayout={false}
               />
             </section>
           );

@@ -1,15 +1,14 @@
 import React from 'react';
 import {
   TrendingUp,
-  Volume2,
-  ShieldCheck,
-  User,
-  LogOut,
   Flame,
   Sparkles,
   Briefcase,
+  User,
+  LogOut,
 } from 'lucide-react';
 import { AuthUser } from '../../lib/supabase';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 interface FeedHeaderProps {
   activeTrackTitle: string;
@@ -41,49 +40,50 @@ export function FeedHeader({
     : 'User';
 
   return (
-    <header className="relative z-20 flex items-center justify-between px-2.5 py-1.5 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md w-full min-w-0">
-      {/* Brand logo & Daily Streak */}
-      <div className="flex items-center gap-1.5 flex-shrink-0">
-        <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-sm">
-          <TrendingUp className="w-3 h-3 text-slate-950 stroke-[2.5]" />
+    <header className="relative z-20 flex items-center justify-between px-3 py-1.5 border-b border-[#e3decb] bg-white/90 backdrop-blur-md w-full max-w-full overflow-hidden flex-shrink-0 dark:border-slate-800/80 dark:bg-slate-950/80">
+      {/* Left: Brand logo & Streak */}
+      <div className="flex items-center gap-1.5 flex-shrink min-w-0">
+        <div className="w-5 h-5 rounded-md bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-xs flex-shrink-0">
+          <TrendingUp className="w-3 h-3 text-white stroke-[2.8]" />
         </div>
-        <span className="text-xs sm:text-sm font-black tracking-tight text-white hidden xxs:inline">
-          Fin<span className="text-emerald-400">Fluence</span>
+        <span className="text-xs font-black tracking-tight text-slate-900 dark:text-white hidden sm:inline truncate">
+          Fin<span className="text-emerald-600 dark:text-emerald-400">Fluence</span>
         </span>
 
-        {/* Real Dynamic Daily Streak Badge */}
+        {/* Dynamic Streak Badge */}
         <div
           title={`Daily Learning Streak: ${streak} day(s)`}
-          className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] text-amber-300 font-bold shadow-sm shadow-amber-500/10 animate-fade-in"
+          className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded-full text-[10px] text-amber-800 font-bold dark:text-amber-300 flex-shrink-0"
         >
-          <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-amber-400 text-amber-400 animate-pulse" />
-          <span>{streak} {streak === 1 ? 'day' : 'days'}</span>
+          <Flame className="w-3 h-3 fill-amber-500 text-amber-500 flex-shrink-0" />
+          <span>{streak}d</span>
         </div>
       </div>
 
-      {/* Practice Portfolio Simulator Shortcut */}
+      {/* Center: Practice Portfolio Shortcut */}
       {onOpenPortfolio && (
         <button
           onClick={onOpenPortfolio}
           title="Open Practice Portfolio Simulator"
-          className="flex items-center gap-1 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors cursor-pointer shadow-sm shadow-emerald-500/10 animate-fade-in"
+          className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 border border-emerald-600/30 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors cursor-pointer shadow-xs dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 dark:border-emerald-500/40 dark:text-emerald-300 flex-shrink-0 mx-1"
         >
-          <Briefcase className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-400" />
+          <Briefcase className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
           <span>₹1L Sandbox</span>
         </button>
       )}
 
-      {/* User identity & Controls */}
+      {/* Right: Theme Toggle & User identity */}
       <div className="flex items-center gap-1.5 flex-shrink-0">
-        {/* User Badge with XP */}
+        <ThemeToggle compact={true} />
+
         {user && (
-          <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 px-1.5 py-0.5 rounded-full text-[9px] text-slate-300">
-            <User className="w-2.5 h-2.5 text-emerald-400" />
-            <span className="font-medium max-w-[55px] sm:max-w-[85px] truncate">
+          <div className="flex items-center gap-1 bg-[#f5f3ec] border border-[#e3decb] px-2 py-0.5 rounded-full text-[10px] text-slate-800 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300">
+            <User className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+            <span className="font-semibold max-w-[50px] xs:max-w-[70px] truncate">
               {userIdentifier}
             </span>
             {xp > 0 && (
-              <span className="text-emerald-400 font-bold flex items-center gap-0.5 text-[8px] bg-emerald-500/10 px-1 rounded">
+              <span className="text-emerald-800 font-bold flex items-center gap-0.5 text-[9px] bg-emerald-500/15 px-1 rounded dark:text-emerald-300">
                 <Sparkles className="w-2 h-2" />
                 {xp}
               </span>
@@ -93,27 +93,13 @@ export function FeedHeader({
                 onClick={onSignOut}
                 title="Log Out"
                 aria-label="Log Out"
-                className="ml-0.5 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                className="ml-0.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 transition-colors cursor-pointer"
               >
                 <LogOut className="w-2.5 h-2.5" />
               </button>
             )}
           </div>
         )}
-
-        {/* Counter */}
-        <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800">
-          {currentIndex + 1}/{totalCards}
-        </span>
-
-        {/* Audio Toggle */}
-        <button
-          onClick={() => alert('Audio explanations coming in Phase 2!')}
-          aria-label="Toggle Audio"
-          className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
-        >
-          <Volume2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-        </button>
       </div>
     </header>
   );

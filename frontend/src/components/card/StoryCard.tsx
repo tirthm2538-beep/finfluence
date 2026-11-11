@@ -36,50 +36,52 @@ export function StoryCard({
 
   return (
     <div
-      className={`relative w-full h-full flex flex-col justify-start overflow-y-auto overflow-x-hidden text-white no-scrollbar overscroll-contain min-w-0 ${
-        isDesktopLayout ? 'px-6 py-4' : 'px-2.5 py-1.5 sm:px-3 sm:py-2'
+      className={`relative w-full max-w-full h-full flex flex-col justify-start overflow-y-auto overflow-x-hidden no-scrollbar overscroll-contain min-w-0 ${
+        isDesktopLayout ? 'px-6 py-4' : 'px-3 py-2 sm:px-4 sm:py-3'
       }`}
     >
-      {/* Background ambient lighting */}
-      <div
-        className={`absolute top-1/4 -right-16 rounded-full pointer-events-none transition-all duration-500 ${
-          isDesktopLayout ? 'w-96 h-96 blur-[120px]' : 'w-48 sm:w-64 h-48 sm:h-64 blur-[80px]'
-        } ${isStockMarket ? 'bg-cyan-500/10' : 'bg-emerald-500/10'}`}
-      />
-      <div
-        className={`absolute bottom-6 -left-16 rounded-full bg-indigo-500/10 pointer-events-none ${
-          isDesktopLayout ? 'w-96 h-96 blur-[120px]' : 'w-48 sm:w-64 h-48 sm:h-64 blur-[80px]'
-        }`}
-      />
+      {/* Background ambient lighting - strictly contained within overflow-hidden boundary */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className={`absolute top-1/4 -right-12 rounded-full transition-all duration-500 ${
+            isDesktopLayout ? 'w-96 h-96 blur-[120px]' : 'w-48 h-48 blur-[80px]'
+          } ${isStockMarket ? 'bg-cyan-500/10' : 'bg-emerald-500/10'}`}
+        />
+        <div
+          className={`absolute bottom-6 -left-12 rounded-full ${
+            isDesktopLayout ? 'w-96 h-96 blur-[120px]' : 'w-48 h-48 blur-[80px]'
+          } ${isStockMarket ? 'bg-indigo-500/10' : 'bg-teal-500/10'}`}
+        />
+      </div>
 
       {/* Card Content Area */}
       <div
-        className={`relative z-10 flex flex-col mx-auto w-full min-w-0 ${
-          isDesktopLayout ? 'max-w-4xl gap-3.5' : 'max-w-md gap-1.5 sm:gap-2'
+        className={`relative z-10 flex flex-col mx-auto w-full min-w-0 max-w-full ${
+          isDesktopLayout ? 'max-w-4xl gap-3.5' : 'max-w-md gap-2'
         }`}
       >
         {/* Meta badges & Header */}
-        <div className="flex items-center justify-between gap-1 w-full min-w-0 pb-0.5">
+        <div className="flex items-center justify-between gap-1.5 w-full min-w-0 pb-0.5">
           <div className="flex items-center gap-1.5 min-w-0">
             <Badge variant={isStockMarket ? 'blue' : 'emerald'}>
               {card.tag}
             </Badge>
             <span
-              className={`font-semibold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded ${
-                isDesktopLayout ? 'text-xs' : 'text-[9px] sm:text-[10px]'
+              className={`font-bold bg-[#ede9dc] text-slate-800 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 rounded ${
+                isDesktopLayout ? 'text-xs' : 'text-[10px]'
               }`}
             >
               #{card.conceptNumber}
             </span>
             {isCompleted && (
               <span
-                className={`flex items-center gap-1 font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 ${
-                  isDesktopLayout ? 'text-xs' : 'text-[8px] sm:text-[9px]'
+                className={`flex items-center gap-1 font-bold text-emerald-800 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 dark:text-emerald-300 ${
+                  isDesktopLayout ? 'text-xs' : 'text-[9px]'
                 }`}
               >
                 <CheckCircle2
                   className={
-                    isDesktopLayout ? 'w-3.5 h-3.5 text-emerald-400' : 'w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-400'
+                    isDesktopLayout ? 'w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400' : 'w-3 h-3 text-emerald-600 dark:text-emerald-400'
                   }
                 />
                 <span>Done</span>
@@ -88,13 +90,13 @@ export function StoryCard({
           </div>
 
           <div
-            className={`flex items-center gap-1 font-semibold text-amber-400 bg-amber-500/10 rounded-full border border-amber-500/20 flex-shrink-0 shadow-sm ${
-              isDesktopLayout ? 'text-xs px-2.5 py-1' : 'text-[9px] sm:text-[10px] px-2 py-0.5'
+            className={`flex items-center gap-1 font-bold text-amber-800 bg-amber-500/10 rounded-full border border-amber-500/25 flex-shrink-0 shadow-xs dark:text-amber-300 ${
+              isDesktopLayout ? 'text-xs px-2.5 py-1' : 'text-[10px] px-2 py-0.5'
             }`}
           >
             <Flame
-              className={`fill-amber-400 text-amber-400 ${
-                isDesktopLayout ? 'w-3.5 h-3.5' : 'w-2.5 h-2.5 sm:w-3 sm:h-3'
+              className={`fill-amber-500 text-amber-500 ${
+                isDesktopLayout ? 'w-3.5 h-3.5' : 'w-3 h-3'
               }`}
             />
             <span>{currentStreak} Day Streak</span>
@@ -104,15 +106,15 @@ export function StoryCard({
         {/* Concept Title */}
         <div className="w-full min-w-0">
           <h1
-            className={`font-black tracking-tight text-white leading-tight break-words ${
-              isDesktopLayout ? 'text-2xl lg:text-3xl' : 'text-xs sm:text-sm'
+            className={`font-black tracking-tight text-slate-900 dark:text-white leading-tight break-words hyphens-auto ${
+              isDesktopLayout ? 'text-2xl lg:text-3xl' : 'text-base sm:text-lg'
             }`}
           >
             {card.conceptTitle}
           </h1>
           <p
-            className={`text-slate-400 mt-0.5 ${
-              isDesktopLayout ? 'text-xs sm:text-sm' : 'text-[9px] sm:text-[10px]'
+            className={`text-slate-600 dark:text-slate-400 font-medium mt-0.5 ${
+              isDesktopLayout ? 'text-xs sm:text-sm' : 'text-[10px] sm:text-xs'
             }`}
           >
             {card.trackTitle} &bull; {card.readTime}
@@ -121,10 +123,10 @@ export function StoryCard({
 
         {/* 4 Modular Sections (2x2 grid if isDesktopLayout, single column if mobile) */}
         <div
-          className={`w-full min-w-0 ${
+          className={`w-full min-w-0 max-w-full ${
             isDesktopLayout
               ? 'grid grid-cols-2 gap-3.5'
-              : 'flex flex-col gap-1.5 sm:gap-2'
+              : 'flex flex-col gap-2'
           }`}
         >
           {/* Section 1: The Hook */}
@@ -155,28 +157,36 @@ export function StoryCard({
 
         {/* Footer actions inside card */}
         <div
-          className={`flex items-center justify-between text-slate-400 w-full min-w-0 border-t border-slate-800/60 mt-1 ${
-            isDesktopLayout ? 'pt-2 pb-1 text-xs' : 'pt-1 pb-1 text-[9px] sm:text-[10px]'
+          className={`flex items-center justify-between text-slate-600 dark:text-slate-400 w-full min-w-0 border-t border-[#e3decb] dark:border-slate-800/80 mt-1 ${
+            isDesktopLayout ? 'pt-2.5 pb-1 text-xs' : 'pt-2 pb-1 text-xs'
           }`}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               onClick={() => setIsShareOpen(true)}
-              className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer bg-slate-900/80 px-2 py-1 rounded-md border border-slate-800 hover:border-slate-700"
+              className="flex items-center gap-1.5 transition-colors cursor-pointer bg-[#f5f3ec] hover:bg-[#ede9dc] border border-[#e3decb] px-2.5 py-1 rounded-lg text-slate-800 dark:bg-slate-900/80 dark:border-slate-800 dark:text-slate-300 dark:hover:text-white"
             >
-              <Share2 className="w-3 h-3 text-emerald-400" />
-              <span className="text-slate-300 hover:text-white font-medium">Share</span>
+              <Share2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-semibold text-xs">Share</span>
             </button>
             <button
               onClick={() => onToggleBookmark?.(card.id)}
-              className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer bg-slate-900/80 px-2 py-1 rounded-md border border-slate-800 hover:border-slate-700"
+              className="flex items-center gap-1.5 transition-colors cursor-pointer bg-[#f5f3ec] hover:bg-[#ede9dc] border border-[#e3decb] px-2.5 py-1 rounded-lg dark:bg-slate-900/80 dark:border-slate-800"
             >
               <Bookmark
-                className={`w-3 h-3 ${
-                  isSaved ? 'text-amber-400 fill-amber-400' : 'text-slate-400'
+                className={`w-3.5 h-3.5 ${
+                  isSaved
+                    ? 'text-amber-500 fill-amber-500'
+                    : 'text-slate-600 dark:text-slate-400'
                 }`}
               />
-              <span className={isSaved ? 'text-amber-300 font-semibold' : 'text-slate-300 font-medium'}>
+              <span
+                className={`font-semibold text-xs ${
+                  isSaved
+                    ? 'text-amber-700 dark:text-amber-300'
+                    : 'text-slate-800 dark:text-slate-300'
+                }`}
+              >
                 {isSaved ? 'Saved' : 'Save'}
               </span>
             </button>
@@ -184,7 +194,7 @@ export function StoryCard({
 
           <div className="flex items-center gap-2">
             {!isDesktopLayout ? (
-              <span className="text-[8px] sm:text-[9px] text-slate-500 italic">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 italic hidden sm:inline">
                 Swipe up for next ⇅
               </span>
             ) : (
@@ -192,7 +202,7 @@ export function StoryCard({
               !isLastCard && (
                 <button
                   onClick={onNextCard}
-                  className="flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors cursor-pointer"
                 >
                   <span>Next Concept &rarr;</span>
                 </button>
