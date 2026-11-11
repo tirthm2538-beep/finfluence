@@ -127,6 +127,13 @@ Quiz: What's the main idea behind a SIP?
   - Tested and verified on multiple cards (#1 SIP, #2 Compounding, #6 Credit Score, #17 Volume) in Light and Dark mode.
   - Opening entrance animation added with smooth brand reveal and 1-click skip.
   - Production build (`npm run build`) compiles cleanly in 6.2s with 0 errors.
+- **Phase 13 (Desktop Layout 1366x768 Overlap Elimination & Per-Grid-Cell Scrollability)**: COMPLETE & VERIFIED.
+  - **Zero Bottom Bar Overlap on Laptop Screens**: Eliminated the layout bug on 1366x768 screens (and constrained 1366x628 laptop browser viewports) where the fixed bottom navigation bar previously overlapped Option B/C of the Quick Quiz Check.
+  - **Flexbox `min-h-0` Boundary**: Added `min-h-0` to the desktop center canvas container and refined vertical rhythm (`h-12 lg:h-14` header and footer), mathematically bounding the canvas strictly above the footer (`canvasBottom === footerTop`).
+  - **Modular Per-Cell Scrollability**: Updated the 2x2 grid in `StoryCard.tsx` so that each of the four cells (The Hook, In Plain English, Grounded Analogy, and Quick Quiz Check) has its own independent boundary with `overflow-y-auto scrollbar-thin`. If any concept has unusually long content or feedback banners, the cell scrolls cleanly within its own borders without expanding the card or distorting the grid.
+  - **Vertical Rhythm Optimization**: Compacted card vertical padding, title sizing (`text-lg lg:text-xl`), and quiz option buttons (`min-h-[32px] lg:min-h-[34px]`) so that cards fit completely on screen with generous clearance (+149px to +218px at 1366x768, and +27px to +78px even on 1366x628) with zero initial scrolling required.
+  - **Cross-Card Verification at 1366x768**: Tested and verified across multiple cards with varying text lengths (Card #1 SIP: +218px clearance, Card #2 Compounding: +200px clearance, Card #6 Credit Score: +180px clearance, Card #17 Support & Resistance Dark Mode: +162px clearance).
+  - **Custom Sleek Scrollbars**: Added `.scrollbar-thin` utility classes to `globals.css` providing a subtle, modern scrollbar across webkit and Firefox.
 
 ## Next steps
 1. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for live presentation and demonstration to brokerage executives at `https://finfluence-theta.vercel.app`.

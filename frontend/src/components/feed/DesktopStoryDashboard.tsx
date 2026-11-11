@@ -191,7 +191,7 @@ export function DesktopStoryDashboard({
   return (
     <div className="w-full h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] overflow-hidden select-none">
       {/* 1. Desktop Top Navigation Header */}
-      <header className="h-16 w-full border-b border-[#e5e1d5] bg-white/90 backdrop-blur-md px-6 flex items-center justify-between z-30 flex-shrink-0 dark:border-slate-800/80 dark:bg-slate-900/70">
+      <header className="h-12 lg:h-14 w-full border-b border-[#e5e1d5] bg-white/90 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between z-30 flex-shrink-0 dark:border-slate-800/80 dark:bg-slate-900/70">
         {/* Brand & Tagline */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2.5">
@@ -487,7 +487,7 @@ export function DesktopStoryDashboard({
           <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[140px] bg-teal-500/5 pointer-events-none" />
 
           {/* Interactive Card Canvas (Centered & Scrollable) */}
-          <div className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 flex flex-col items-center">
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 lg:px-6 py-1.5 lg:py-2.5 pb-6 lg:pb-8 flex flex-col items-center scrollbar-thin">
             <div className="w-full max-w-4xl">
               <StoryCard
                 card={activeCard}
@@ -504,7 +504,7 @@ export function DesktopStoryDashboard({
           </div>
 
           {/* DESKTOP BOTTOM CONTROLS & PAGINATION BAR */}
-          <footer className="h-16 w-full border-t border-[#e5e1d5] bg-white/90 backdrop-blur-md px-8 flex items-center justify-between flex-shrink-0 z-30 dark:border-slate-800/80 dark:bg-slate-900/70">
+          <footer className="h-12 lg:h-14 w-full border-t border-[#e5e1d5] bg-white/90 backdrop-blur-md px-6 lg:px-8 flex items-center justify-between flex-shrink-0 z-30 dark:border-slate-800/80 dark:bg-slate-900/70">
             {/* Prev button */}
             <button
               onClick={handlePrev}
