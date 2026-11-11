@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Quiz } from '../../types/card';
-import { HelpCircle, CheckCircle2, XCircle, ArrowDown } from 'lucide-react';
+import { HelpCircle, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
 
 interface QuizSectionProps {
   quiz: Quiz;
@@ -29,42 +29,42 @@ export function QuizSection({
   const selectedOption = quiz.options.find((opt) => opt.id === selectedOptionId);
 
   return (
-    <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-violet-500/10 via-slate-900/70 to-slate-950/90 border border-violet-500/30 p-1.5 sm:p-2 shadow-sm">
+    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-violet-500/15 via-slate-900/80 to-slate-950/90 border border-violet-500/35 p-2 sm:p-2.5 lg:p-4 shadow-sm hover:border-violet-500/50 transition-all duration-200">
       {/* Header */}
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-1">
-          <HelpCircle className="w-2.5 h-2.5 text-violet-400 flex-shrink-0" />
-          <span className="text-[9px] font-bold uppercase tracking-wider text-violet-300">
+      <div className="flex items-center justify-between mb-1.5 lg:mb-2.5">
+        <div className="flex items-center gap-1.5">
+          <HelpCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-violet-400 flex-shrink-0" />
+          <span className="text-[9px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-wider text-violet-300">
             Quick Quiz Check
           </span>
         </div>
         {hasAnsweredCorrectly && (
-          <span className="text-[8px] font-semibold text-emerald-400 flex items-center gap-0.5 bg-emerald-500/10 px-1 py-0.2 rounded border border-emerald-500/20">
-            <CheckCircle2 className="w-2 h-2" /> +10 XP
+          <span className="text-[8px] sm:text-[9px] lg:text-xs font-semibold text-emerald-400 flex items-center gap-1 bg-emerald-500/15 px-1.5 lg:px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse">
+            <Sparkles className="w-2 h-2 lg:w-3 lg:h-3" /> +10 XP Earned
           </span>
         )}
       </div>
 
       {/* Question */}
-      <p className="text-white font-semibold text-[10px] sm:text-[11px] mb-1 leading-snug break-words">
+      <p className="text-white font-semibold text-[10px] sm:text-[11px] lg:text-base mb-1.5 lg:mb-3 leading-snug lg:leading-relaxed break-words">
         {quiz.question}
       </p>
 
       {/* Options */}
-      <div className="space-y-1">
+      <div className="space-y-1 lg:space-y-2">
         {quiz.options.map((option) => {
           const isSelected = selectedOptionId === option.id;
 
           let optionStyle =
-            'bg-slate-800/70 border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-slate-600';
+            'bg-slate-800/70 border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:shadow-md';
 
           if (isSelected) {
             if (option.isCorrect) {
               optionStyle =
-                'bg-emerald-500/20 border-emerald-500 text-emerald-100 shadow-[0_0_8px_rgba(16,185,129,0.25)]';
+                'bg-emerald-500/20 border-emerald-500 text-emerald-100 shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-1 ring-emerald-500/50';
             } else {
               optionStyle =
-                'bg-rose-500/20 border-rose-500/80 text-rose-100';
+                'bg-rose-500/20 border-rose-500/80 text-rose-100 shadow-[0_0_15px_rgba(244,63,94,0.3)]';
             }
           } else if (hasAnsweredCorrectly && option.isCorrect) {
             optionStyle =
@@ -75,14 +75,14 @@ export function QuizSection({
             <button
               key={option.id}
               onClick={() => handleSelect(option.id, option.isCorrect)}
-              className={`w-full text-left py-1 px-1.5 rounded border transition-all duration-150 flex items-center gap-1.5 text-[9px] sm:text-[10px] font-medium cursor-pointer active:scale-[0.99] ${optionStyle}`}
+              className={`w-full text-left py-1 px-1.5 sm:py-1.5 sm:px-2 lg:py-2.5 lg:px-3.5 rounded-lg border transition-all duration-150 flex items-center gap-2 text-[9px] sm:text-[10px] lg:text-sm font-medium cursor-pointer active:scale-[0.99] ${optionStyle}`}
             >
               <span
-                className={`flex-shrink-0 w-3 h-3 rounded flex items-center justify-center text-[7px] font-bold ${
+                className={`flex-shrink-0 w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-6 lg:h-6 rounded-md flex items-center justify-center text-[7px] sm:text-[8px] lg:text-xs font-bold transition-colors ${
                   isSelected && option.isCorrect
-                    ? 'bg-emerald-500 text-slate-950'
+                    ? 'bg-emerald-500 text-slate-950 font-black'
                     : isSelected && !option.isCorrect
-                    ? 'bg-rose-500 text-white'
+                    ? 'bg-rose-500 text-white font-black'
                     : 'bg-slate-700/80 text-slate-300'
                 }`}
               >
@@ -90,10 +90,10 @@ export function QuizSection({
               </span>
               <span className="flex-1 leading-tight break-words">{option.text}</span>
               {isSelected && option.isCorrect && (
-                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-5 lg:h-5 text-emerald-400 flex-shrink-0" />
               )}
               {isSelected && !option.isCorrect && (
-                <XCircle className="w-2.5 h-2.5 text-rose-400 flex-shrink-0" />
+                <XCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-5 lg:h-5 text-rose-400 flex-shrink-0" />
               )}
             </button>
           );
@@ -103,37 +103,26 @@ export function QuizSection({
       {/* Feedback Banner */}
       {selectedOption && (
         <div
-          className={`mt-1 p-1 rounded text-[9px] leading-tight border transition-all duration-200 ${
+          className={`mt-1.5 lg:mt-3 p-1.5 lg:p-3 rounded-lg text-[9px] sm:text-[10px] lg:text-sm leading-tight border transition-all duration-200 ${
             selectedOption.isCorrect
               ? 'bg-emerald-950/70 border-emerald-500/30 text-emerald-200'
               : 'bg-rose-950/70 border-rose-500/30 text-rose-200'
           }`}
         >
-          <div className="flex items-start gap-1">
+          <div className="flex items-start gap-1.5 lg:gap-2">
             {selectedOption.isCorrect ? (
-              <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
             ) : (
-              <XCircle className="w-2.5 h-2.5 text-rose-400 mt-0.5 flex-shrink-0" />
+              <XCircle className="w-3 h-3 lg:w-4 lg:h-4 text-rose-400 mt-0.5 flex-shrink-0" />
             )}
             <div className="break-words">
-              <span className="font-semibold mr-1">
+              <span className="font-bold mr-1">
                 {selectedOption.isCorrect ? 'Spot on! 🎯' : 'Not quite! 🤔'}
               </span>
-              <span className="opacity-90">{selectedOption.explanation}</span>
+              <span>{selectedOption.explanation}</span>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Swipe Next CTA when answered correctly */}
-      {hasAnsweredCorrectly && !isLastCard && (
-        <button
-          onClick={onNextCard}
-          className="mt-1 w-full py-1 px-2.5 rounded bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-[10px] flex items-center justify-center gap-1 shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer"
-        >
-          <span>Next Concept</span>
-          <ArrowDown className="w-2.5 h-2.5 animate-bounce" />
-        </button>
       )}
     </div>
   );

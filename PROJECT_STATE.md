@@ -10,7 +10,7 @@ commerce students, and to pitch to a software/trading company CEO.
 - GitHub: https://github.com/tirthm2538-beep/finfluence (Branch: `main`)
 
 ## Tech stack
-- Frontend: Next.js (React 19, App Router) + Tailwind CSS v4 + Lucide Icons — swipeable card/story UI (Port 3000 locally, deploying to Vercel)
+- Frontend: Next.js (React 19, App Router) + Tailwind CSS v4 + Lucide Icons — dual-mode responsive layout: full widescreen desktop dashboard ($\ge 1024$px) + native swipeable story UI for mobile (<1024px)
 - Backend: Python + FastAPI + Pydantic v2 + Uvicorn — live on Render at `https://finfluence-d420.onrender.com`
 - Database & Auth: Supabase (`@supabase/supabase-js` v2) — authentication, user profiles, daily streak engine, card completion tracking, bookmarks, virtual portfolios
 - Deploy: Vercel (frontend) + Render (backend)
@@ -34,20 +34,25 @@ commerce students, and to pitch to a software/trading company CEO.
      buy/sell signals — 10 complete concepts
 - Voice/tone LOCKED with example card — relatable hook, plain explanation, one 
   grounded analogy, short quiz. No forced slang.
-- Visual & Responsive UI Architecture:
-  - Mobile-first vertical story feed inspired by TikTok / Instagram Stories
-  - CSS Scroll Snap (`snap-y snap-mandatory`) for 60fps native swiping, touch gestures, and keyboard navigation (↑ / ↓ arrows)
-  - Instagram-style segmented progress bar at top showing story progression
-  - Fluid responsive smartphone mockup container (`md:max-h-[calc(100dvh-70px)]` and `flex-1 min-h-0`) that automatically adapts to smaller laptop screens without clipping
-  - 4-part modular card architecture: Hook Section, Plain English Explanation, Grounded Analogy, and Interactive Quiz
-  - Proportional typography and compact card paddings (`text-[10px] sm:text-[11px]`, `p-1.5 sm:p-2`, `break-words`, `min-w-0`)
-  - Instant visual feedback on quiz selection (green glow for correct answer + XP reward, red highlight for incorrect options)
-  - Shareable card modal feature implemented (lets users copy formatted summary or share natively)
+- Responsive & Desktop Web Overhaul (Phase 10):
+  - **Full-Width Desktop Web Platform ($\ge 1024$px)**:
+    - Completely eliminates the narrow smartphone confinement on laptop and desktop monitors.
+    - Full-width top navigation bar featuring glowing FinFluence Web Edition branding, direct Story Cards / Practice Portfolio switcher, Live API connection indicator, Daily Streak badge (`🔥 X Days`), Total XP badge (`✨ Y XP`), User profile chip, and a "📱 Phone View" simulator toggle.
+    - Left Sidebar Navigator (280px-350px): User Level / Rank badge ("Finance Novice", "Market Strategist", "Wall Street Prodigy"), XP progress bar, track switcher (All 20, Core Finance, Stock Market, Saved Bookmarks), search bar, and full concept jump checklist with completion checkmarks (`✅ Done`) and saved stars.
+    - Center Stage Card Experience: 2x2 modular card grid with large, readable desktop typography (`text-2xl lg:text-3xl font-black` titles, `text-base lg:text-lg leading-relaxed` hooks & explanations, comfortable `lg:py-3 lg:px-4` quiz buttons with instant XP reward feedback).
+    - Desktop Bottom Navigation Bar: Previous / Next concept buttons, interactive concept dots, and keyboard navigation hints (`← / →` arrows).
+  - **Practice Portfolio Simulator Desktop Dashboard**:
+    - Expands into a widescreen 2-column financial dashboard (`max-w-6xl`).
+    - Left Column: Simulated Net Worth (₹1,00,000), total P&L (% and ₹), interactive SVG performance trend chart, cash vs. invested capital split, CEO brokerage Demat partner tie-in banner, and 1-click Reset button.
+    - Right Column: Watchlist of 6 fictional simulated instruments (`SIM-INDEX50`, `SIM-CHAIBYTES`, `SIM-GREENWATT`, etc.) with real-time prices, 24h change %, and quick BUY/SELL buttons, plus active holdings management table.
+  - **Mobile Phone Feed Intact (< 1024px)**:
+    - 100% native mobile experience preserved: smooth vertical CSS scroll snapping, compact typography, segmented progress bars, and bottom navigation controls.
+  - **Interactive Dual-Mode Toggle for Desktop Users & Reviewers**:
+    - Users on laptops/desktops can click "📱 Phone View" anytime to preview the smartphone story feed inside a realistic iPhone frame, and click "🖥️ Switch to Desktop View" to return.
 - Full-Stack Integration Architecture (Phase 4):
   - Next.js frontend connects live to Python FastAPI backend (local or production `https://finfluence-d420.onrender.com`)
-  - Visual status pill in header: `🟢 Live API (Render)` when connected, or `🟡 Offline Backup Mode` when running disconnected
+  - Visual status pill in header: `🟢 Live API Connected` when online, or `🟡 Offline Mode` when running disconnected
   - Graceful resilience: if backend is unreachable, frontend displays a friendly error screen with quick retry and a one-click button to load local offline backup cards (`sampleCards.ts`)
-  - Server orchestration: dual-terminal option or single command `npm run dev:all` via `concurrently`
 - Backend Endpoints (Live on Render):
   - `GET /health` (status check, version, total cards count)
   - `GET /cards` (returns all 20 cards, supports optional `?track=` filter)
@@ -60,31 +65,9 @@ commerce students, and to pitch to a software/trading company CEO.
   - User progress tracking engine in `src/lib/userProgress.ts`:
     - Tracks completed cards in `completed_cards` table (`user_id`, `card_id`, `track`, `score: 10`, `completed_at`)
     - Tracks daily learning streaks and XP in `profiles` table (`current_streak`, `longest_streak`, `xp_points`, `last_active_date`)
-    - Calendar day arithmetic with UTC day boundaries to calculate daily streaks without timezone or DST drift
+    - UTC calendar day arithmetic to prevent timezone or DST drift
     - Real-time bookmarking toggles synced to `bookmarks` table (`user_id`, `card_id`, `saved_at`)
-  - Header Display:
-    - Visible daily streak badge (`🔥 X day(s) streak`) in header and on each card
-    - Active XP counter (`✨ X XP`) next to user identifier
-    - Concept completion badge (`Done` with checkmark) for mastered cards
-  - "Continue as Guest / Pitch Demo" 1-click option guarantees 100% demo-readiness:
-    - Skips Supabase network calls and persists streaks, XP, completions, and bookmarks in `localStorage`
-    - Real logged-in users sync to Supabase PostgreSQL database tables
-- Business Tie-in: Practice Portfolio Simulator (CEO Pitch Feature):
-  - Dedicated virtual sandbox accessible via top desktop tab switcher and phone header shortcut (`₹1L Sandbox`)
-  - Each user starts with ₹1,00,000 virtual balance stored in Supabase `virtual_portfolios` table (with `localStorage` fallback for Guest demo mode)
-  - 6 educational simulated instruments with made-up names to avoid confusion with real assets:
-    - `SIM-INDEX50` (Top 50 Simulated Index ETF)
-    - `SIM-CHAIBYTES` (ChaiBytes Cloud Tech)
-    - `SIM-GREENWATT` (GreenWatt Renewables)
-    - `SIM-METROMART` (MetroMart Quick Retail)
-    - `SIM-VAULTBANK` (Vault Horizon Bank)
-    - `SIM-AURUMGOLD` (Aurum Virtual Gold Hedge)
-  - Organic simulated price movements with random walk drift on each visit/session
-  - Simulated BUY and SELL order execution with real-time balance calculations, weighted average buy pricing, and instant P&L updates
-  - Clean summary card with live net worth, cash balance, invested capital, P&L (₹ and %), and responsive SVG trend chart
-  - Clear and unambiguous PRACTICE/SIMULATION notices and disclaimer badges
-  - Interactive B2B partner pitch modal demonstrating how the sandbox funnels risk-educated students into 1-click brokerage Demat account onboarding
-  - One-click account reset button to restore fresh ₹1,00,000 balance
+  - "Continue as Guest / Pitch Demo" 1-click option guarantees 100% demo-readiness with `localStorage` persistence.
 - CEO Pitch & Partner Guide:
   - Full pitch guide created in `PITCH_DECK_GUIDE.md` detailing the 3-minute live walkthrough, student CAC reduction thesis, and objection handling for brokerage executives.
 - Deployment Status:
@@ -109,36 +92,41 @@ Quiz: What's the main idea behind a SIP?
 - **Phase 1 (Content Tone & Structure)**: LOCKED.
 - **Phase 2 (Content Library Population)**: COMPLETE (all 20 cards drafted and loaded across Track 1 and Track 2).
 - **Phase 3 (Frontend Groundwork & Card UI)**: COMPLETE & VERIFIED.
-  - Next.js 16 + React 19 + Tailwind CSS configured in `frontend/`.
-  - Responsive layout verified across laptop, desktop, and mobile viewports.
 - **Phase 4 (Backend API & Full-Stack Integration)**: COMPLETE & VERIFIED LIVE.
-  - FastAPI app running on `http://127.0.0.1:8000`.
-  - Next.js frontend dynamically fetching live cards from `http://localhost:8000/cards`.
+  - FastAPI app running on `http://127.0.0.1:8000` & Render `https://finfluence-d420.onrender.com`.
   - Loading, error, and offline fallback (`sampleCards.ts`) states fully operational.
-  - `POST /cards/generate` endpoint available for AI content generation.
 - **Phase 5 (Database & Auth & Real-Time Progress)**: COMPLETE & VERIFIED.
   - Supabase client and auth flow (Sign in, Sign up, Sign out) fully wired into Next.js.
-  - Live Supabase persistence for quiz completions (`completed_cards`), daily streaks and XP (`profiles`), and saved cards (`bookmarks`).
-  - Visual streak badge (`🔥 X day(s) streak`), XP pill, and card completion status active in the UI.
+  - Live Supabase persistence for quiz completions, streaks, XP, and bookmarks.
   - Guest demo mode flawlessly operational with offline `localStorage` fallback.
 - **Phase 6 (Business Tie-In / Practice Portfolio Simulator)**: COMPLETE & TESTED.
   - ₹1,00,000 starting virtual balance with Supabase `virtual_portfolios` persistence.
   - 6 fictional simulated instruments with random-walk price fluctuations.
   - Instant BUY and SELL simulated trading with full portfolio accounting and P&L calculation.
   - Responsive SVG trend chart displaying portfolio value over time.
-  - Prominent PRACTICE/SIMULATION notices and disclaimer badges.
   - Strategic CEO partnership pitch modal.
-- **Phase 7 (Backend Deployment)**: COMPLETE & LIVE.
-  - Backend deployed to Render at `https://finfluence-d420.onrender.com`.
-  - Swagger UI live at `https://finfluence-d420.onrender.com/docs`.
+- **Phase 7 (Backend Deployment)**: COMPLETE & LIVE on Render.
 - **Phase 8 (Frontend Vercel Deployment)**: READY & VERIFIED.
-  - Removed root `vercel.json` to eliminate path doubling (`frontend/frontend/package.json`) and allow native Next.js framework detection in Vercel.
-  - Code pushed to GitHub repository `https://github.com/tirthm2538-beep/finfluence`.
-  - Frontend environment variables configured to point to Render backend.
-  - `frontend/.env.example` thoroughly documented with Supabase and Render keys.
-  - Production build (`npm run build`) compiling cleanly in 1.9s with 0 errors.
-- **Phase 9 (Pitch Preparation)**: COMPLETE.
-  - Executive pitch deck and demo script written in `PITCH_DECK_GUIDE.md`.
+  - Removed root `vercel.json` to prevent path doubling.
+  - Environment variables documented in `frontend/.env.example`.
+- **Phase 9 (Pitch Preparation)**: COMPLETE in `PITCH_DECK_GUIDE.md`.
+- **Phase 10 (Complete Desktop & Laptop Web Overhaul)**: COMPLETE & VERIFIED.
+  - Fully transformed desktop screens ($\ge 1024$px) from cramped phone mockup to premier widescreen web platform.
+  - Created `DesktopStoryDashboard.tsx` with top navigation bar, left sidebar (user ranking, track filtering, concept search, quick jump checklist), and spacious center stage with 2x2 modular card grid.
+  - Scaled typography responsively (`text-2xl` to `text-3xl` headings, `text-base` body text, large interactive quiz buttons).
+  - Enhanced `PortfolioView.tsx` into a widescreen 2-column desktop financial dashboard.
+  - Redesigned `AuthScreen.tsx` into an expansive 2-column hero showcase on desktop.
+  - Preserved 100% native mobile experience on viewports `< 1024px`.
+  - Verified across multiple resolutions with captured screenshots:
+    - 1440x900 desktop feed (`desktop-after-feed-1440.png`)
+    - 1920x1080 full HD feed (`desktop-after-feed-1920.png`)
+    - 1366x768 standard laptop (`desktop-after-feed-1366.png`)
+    - 1440x900 stock market track (`desktop-after-stockmarket-1440.png`)
+    - 1440x900 practice portfolio (`desktop-after-portfolio-1440.png`)
+    - 1440x900 desktop auth screen (`desktop-after-auth-1440.png`)
+    - 1440x900 desktop phone simulator mode (`desktop-after-phoneview-1440.png`)
+    - 390x844 mobile phone feed (`desktop-after-mobile-390.png`)
+  - Production build (`npm run build`) compiles cleanly in 2.1s with 0 errors.
 
 ## Next steps
 1. **Deploy Frontend on Vercel**:
