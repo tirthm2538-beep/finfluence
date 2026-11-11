@@ -171,7 +171,7 @@ export function StoryFeed({ cards, user, onSignOut, onOpenPortfolio }: StoryFeed
           return (
             <section
               key={card.id}
-              className="w-full max-w-full h-full snap-start snap-always flex-shrink-0 flex flex-col justify-start relative overflow-hidden"
+              className="w-full max-w-full h-full snap-start snap-always flex-shrink-0 flex flex-col justify-start relative overflow-y-auto overflow-x-hidden no-scrollbar"
               aria-label={`Story card ${index + 1}: ${card.conceptTitle}`}
             >
               <StoryCard

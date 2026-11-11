@@ -29,9 +29,9 @@ export function QuizSection({
   const selectedOption = quiz.options.find((opt) => opt.id === selectedOptionId);
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-white border border-emerald-600/25 p-2.5 sm:p-3 lg:p-4 shadow-xs transition-all duration-200 w-full min-w-0 max-w-full dark:bg-gradient-to-br dark:from-emerald-950/30 dark:via-slate-900/80 dark:to-slate-950/90 dark:border-emerald-500/35">
+    <div className="relative rounded-xl bg-white border border-emerald-600/25 p-2 sm:p-2.5 lg:p-4 shadow-xs transition-all duration-200 w-full min-w-0 max-w-full dark:bg-gradient-to-br dark:from-emerald-950/30 dark:via-slate-900/80 dark:to-slate-950/90 dark:border-emerald-500/35">
       {/* Header */}
-      <div className="flex items-center justify-between mb-1.5 lg:mb-2.5">
+      <div className="flex items-center justify-between mb-1 sm:mb-1.5 lg:mb-2.5">
         <div className="flex items-center gap-1.5">
           <HelpCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
           <span className="text-[10px] sm:text-[11px] lg:text-xs font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
@@ -46,12 +46,12 @@ export function QuizSection({
       </div>
 
       {/* Question */}
-      <p className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm lg:text-base mb-2 lg:mb-3 leading-snug lg:leading-relaxed break-words hyphens-auto">
+      <p className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm lg:text-base mb-1.5 sm:mb-2 lg:mb-3 leading-snug lg:leading-relaxed break-words hyphens-auto">
         {quiz.question}
       </p>
 
-      {/* Options */}
-      <div className="space-y-1.5 lg:space-y-2">
+      {/* Options - Always full visibility without clipping */}
+      <div className="flex flex-col gap-1.5 sm:gap-2 w-full min-w-0">
         {quiz.options.map((option) => {
           const isSelected = selectedOptionId === option.id;
 
@@ -75,7 +75,7 @@ export function QuizSection({
             <button
               key={option.id}
               onClick={() => handleSelect(option.id, option.isCorrect)}
-              className={`w-full text-left py-2 px-2.5 sm:py-2.5 sm:px-3 lg:py-2.5 lg:px-3.5 rounded-lg border transition-all duration-150 flex items-center gap-2 text-xs sm:text-sm font-medium cursor-pointer active:scale-[0.99] min-w-0 ${optionStyle}`}
+              className={`w-full text-left py-1.5 px-2 sm:py-2 sm:px-2.5 lg:py-2.5 lg:px-3.5 rounded-lg border transition-all duration-150 flex items-center gap-2 text-xs sm:text-sm font-medium cursor-pointer active:scale-[0.99] min-w-0 flex-shrink-0 min-h-[34px] sm:min-h-[38px] ${optionStyle}`}
             >
               <span
                 className={`flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-md flex items-center justify-center text-[9px] sm:text-[10px] lg:text-xs font-black transition-colors ${

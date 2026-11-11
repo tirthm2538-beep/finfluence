@@ -7,6 +7,7 @@ import { StoryFeed } from '../components/feed/StoryFeed';
 import { DesktopStoryDashboard } from '../components/feed/DesktopStoryDashboard';
 import { AuthScreen } from '../components/auth/AuthScreen';
 import { PortfolioView } from '../components/portfolio/PortfolioView';
+import { OpeningAnimation } from '../components/ui/OpeningAnimation';
 import {
   AuthUser,
   getSupabaseClient,
@@ -33,6 +34,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'backend' | 'fallback' | null>(null);
+  const [showIntro, setShowIntro] = useState(true);
 
   // Check initial authentication state (Supabase session or Guest session)
   useEffect(() => {
@@ -239,6 +241,9 @@ export default function Home() {
   // View 5: Authenticated & Cards Ready -> Clean Responsive Platform
   return (
     <main className="h-dvh max-h-dvh w-full max-w-full flex flex-col bg-[var(--background)] text-[var(--foreground)] relative overflow-hidden">
+      {/* Short, non-blocking polished entrance intro */}
+      {showIntro && <OpeningAnimation onFinish={() => setShowIntro(false)} />}
+
       {/* DESKTOP DASHBOARD (>= 1024px) */}
       <div className="hidden lg:flex w-full h-full flex-col overflow-hidden">
         {activeView === 'portfolio' ? (

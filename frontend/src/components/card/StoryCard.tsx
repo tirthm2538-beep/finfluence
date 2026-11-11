@@ -36,8 +36,10 @@ export function StoryCard({
 
   return (
     <div
-      className={`relative w-full max-w-full h-full flex flex-col justify-start overflow-y-auto overflow-x-hidden no-scrollbar overscroll-contain min-w-0 ${
-        isDesktopLayout ? 'px-6 py-4' : 'px-3 py-2 sm:px-4 sm:py-3'
+      className={`relative w-full max-w-full min-w-0 ${
+        isDesktopLayout
+          ? 'h-auto min-h-0 px-6 py-4'
+          : 'min-h-full h-auto flex flex-col justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 overflow-x-hidden'
       }`}
     >
       {/* Background ambient lighting - strictly contained within overflow-hidden boundary */}
@@ -57,7 +59,7 @@ export function StoryCard({
       {/* Card Content Area */}
       <div
         className={`relative z-10 flex flex-col mx-auto w-full min-w-0 max-w-full ${
-          isDesktopLayout ? 'max-w-4xl gap-3.5' : 'max-w-md gap-2'
+          isDesktopLayout ? 'max-w-4xl gap-3.5' : 'max-w-md gap-1.5 sm:gap-2 flex-1 justify-between'
         }`}
       >
         {/* Meta badges & Header */}
@@ -126,7 +128,7 @@ export function StoryCard({
           className={`w-full min-w-0 max-w-full ${
             isDesktopLayout
               ? 'grid grid-cols-2 gap-3.5'
-              : 'flex flex-col gap-2'
+              : 'flex flex-col gap-1.5 sm:gap-2'
           }`}
         >
           {/* Section 1: The Hook */}
@@ -157,8 +159,8 @@ export function StoryCard({
 
         {/* Footer actions inside card */}
         <div
-          className={`flex items-center justify-between text-slate-600 dark:text-slate-400 w-full min-w-0 border-t border-[#e3decb] dark:border-slate-800/80 mt-1 ${
-            isDesktopLayout ? 'pt-2.5 pb-1 text-xs' : 'pt-2 pb-1 text-xs'
+          className={`flex items-center justify-between text-slate-600 dark:text-slate-400 w-full min-w-0 border-t border-[#e3decb] dark:border-slate-800/80 ${
+            isDesktopLayout ? 'mt-2 pt-2.5 pb-1 text-xs' : 'mt-1 pt-1.5 pb-0.5 text-xs flex-shrink-0'
           }`}
         >
           <div className="flex items-center gap-2.5 sm:gap-3">

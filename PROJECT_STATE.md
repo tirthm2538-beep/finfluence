@@ -6,8 +6,10 @@ crypto, stock market, etc.) through short, swipeable "story cards" with a fun,
 meme-friendly tone and quick quizzes — built to connect science, arts, and 
 commerce students, and to pitch to a software/trading company CEO.
 
-## Repository
+## Repository & Live Deployments
 - GitHub: https://github.com/tirthm2538-beep/finfluence (Branch: `main`)
+- Frontend (Live on Vercel): https://finfluence-theta.vercel.app
+- Backend (Live on Render): https://finfluence-d420.onrender.com
 
 ## Tech stack
 - Frontend: Next.js (React 19, App Router) + Tailwind CSS v4 + Lucide Icons — dual-mode responsive layout: full widescreen desktop dashboard ($\ge 1024$px) + native swipeable story UI for mobile (<1024px), integrated Theme Engine (Light Mode: White / Cream / Rich Green & Dark Mode: Obsidian / Rich Green)
@@ -53,13 +55,16 @@ commerce students, and to pitch to a software/trading company CEO.
     - Left Sidebar Navigator: Rank progression ("Finance Novice"), completion meter, track filter tabs, search input, and interactive 20-concept jump checklist with completion checkmarks.
     - Center Stage Card Experience: 2x2 modular card grid (Hook, Plain English, Analogy, Quiz check) with spacious typography and instant XP reward feedback.
     - Desktop Bottom Navigation Bar: Previous / Next concept controls, progress dots, and keyboard shortcuts (`← / →`).
-- Mobile Phone Feed & Overflow Fixes (Phase 11):
-  - **Mobile Overflow & Zoom Bug Completely Resolved**:
-    - Diagnosed and fixed root cause: ambient lighting glow elements were using negative horizontal positions (`-right-16` / `translate-x-1/3`), expanding the container's scrollWidth by 64px and pushing cards left, cutting off right-side text and badges.
-    - Wrapped ambient glow effects inside an explicit `<div className="absolute inset-0 overflow-hidden pointer-events-none">` boundary.
-    - Removed restrictive viewport lock `maximum-scale: 1, user-scalable: false` from `layout.tsx` to allow natural responsive rendering.
-    - Adjusted mobile card footer layout to ensure floating navigation pill (`^ 1/20 v`) does not overlap card buttons or hints.
-    - Verified 100% bug-free rendering across 375px (iPhone SE), 390px (iPhone 12/13/14), and 414px (iPhone XR/11/Plus) in both Light and Dark modes.
+- Mobile Phone Feed & Quiz Visibility Optimization (Phases 11 & 12):
+  - **All Quiz Options (A, B, C) 100% Visible & Unclipped**:
+    - Replaced restrictive `overflow-hidden` with `overflow-visible` on `QuizSection.tsx` and applied `flex-shrink-0 min-h-[34px]` to all option buttons, ensuring options never collapse or get cut off.
+    - Optimized mobile vertical rhythm (`p-2 sm:p-2.5` padding and `gap-1.5 sm:gap-2` spacing) to naturally fit the entire story card (Hook, Explanation, Analogy, Quiz with all 3 options, and action footer) within standard mobile viewports (375px to 414px) without requiring initial scrolling.
+    - Enabled natural vertical scrolling (`overflow-y-auto no-scrollbar`) on `<section>` so that long explanations or expanded feedback banners can be scrolled cleanly.
+    - Verified across multiple cards (#1 SIP, #2 Compounding, #6 Credit Score, #17 Volume) in Light and Dark mode.
+- Polished Entrance Animation (Phase 12):
+  - Created `OpeningAnimation.tsx`: glowing brand logo, pulse icon, and smooth ~1-second progress bar filling up.
+  - Runs briefly on initial load or guest login, fading out cleanly after 1.2s.
+  - Completely non-blocking: tap/click anywhere or press any key to skip immediately.
 - Full-Stack Integration Architecture (Phase 4):
   - Next.js frontend connects live to Python FastAPI backend (Render: `https://finfluence-d420.onrender.com`).
   - Visual status pill in header: `🟢 Live API Connected` when online, or `🟡 Offline Mode` when running disconnected.
@@ -88,8 +93,8 @@ commerce students, and to pitch to a software/trading company CEO.
 - CEO Pitch & Partner Guide:
   - Full pitch guide created in `PITCH_DECK_GUIDE.md` detailing the 3-minute live walkthrough, student CAC reduction thesis, and brokerage executive partner hooks.
 - Deployment Status:
+  - Frontend: **LIVE** on Vercel at `https://finfluence-theta.vercel.app`.
   - Backend: **LIVE** on Render at `https://finfluence-d420.onrender.com`.
-  - Frontend: Committed to GitHub, ready for 1-click Vercel deployment with Root Directory set to `frontend`.
 
 ## Locked example card (template for all cards)
 Concept: What is a SIP?
@@ -113,30 +118,17 @@ Quiz: What's the main idea behind a SIP?
 - **Phase 5 (Database & Auth & Real-Time Progress)**: COMPLETE & VERIFIED.
 - **Phase 6 (Business Tie-In / Practice Portfolio Simulator)**: COMPLETE & TESTED.
 - **Phase 7 (Backend Deployment)**: COMPLETE & LIVE on Render.
-- **Phase 8 (Frontend Vercel Deployment)**: READY & VERIFIED.
+- **Phase 8 (Frontend Vercel Deployment)**: COMPLETE & LIVE on Vercel at `https://finfluence-theta.vercel.app`.
 - **Phase 9 (Pitch Preparation)**: COMPLETE in `PITCH_DECK_GUIDE.md`.
 - **Phase 10 (Desktop Web Dashboard)**: COMPLETE & VERIFIED.
 - **Phase 11 (Color Redesign, Theme Engine, Desktop Streamline & Mobile Fixes)**: COMPLETE & VERIFIED.
-  - Default Light Mode redesign: pristine white/off-white background, warm cream cards, and rich emerald green accents.
-  - Dark Mode theme toggle: accessible switch in navbar and mobile header, persisting in `localStorage`.
-  - Desktop "Phone View" toggle removed: clean, dedicated widescreen desktop experience.
-  - Mobile overflow bug completely resolved: glow containment fixed horizontal width, text and badges wrap naturally without clipping.
-  - Verified across multiple viewports:
-    - `desktop-light-feed-1440.png` (1440x900 Light Desktop Feed)
-    - `desktop-dark-feed-1440.png` (1440x900 Dark Desktop Feed)
-    - `desktop-light-portfolio-1440.png` (1440x900 Light Practice Portfolio)
-    - `desktop-dark-portfolio-1440.png` (1440x900 Dark Practice Portfolio)
-    - `desktop-light-auth-1440.png` (1440x900 Light Auth Screen)
-    - `mobile-fix-375.png` (375x667 iPhone SE Light)
-    - `mobile-fix-390.png` (390x844 iPhone 12/13/14 Light)
-    - `mobile-fix-414.png` (414x896 iPhone XR/11/Plus Light)
-    - `mobile-fix-390-dark.png` (390x844 iPhone 12/13/14 Dark)
-  - Production build (`npm run build`) compiles cleanly in 2.9s with 0 errors.
+- **Phase 12 (Quiz Option Full-Visibility Fix & Opening Animation)**: COMPLETE & VERIFIED.
+  - All quiz options (A, B, C) render with full visibility on every card across desktop and mobile.
+  - Tested and verified on multiple cards (#1 SIP, #2 Compounding, #6 Credit Score, #17 Volume) in Light and Dark mode.
+  - Opening entrance animation added with smooth brand reveal and 1-click skip.
+  - Production build (`npm run build`) compiles cleanly in 6.2s with 0 errors.
 
 ## Next steps
-1. **Deploy Frontend on Vercel**:
-   - Go to [vercel.com](https://vercel.com) -> New Project -> Import `tirthm2538-beep/finfluence`.
-   - Set Root Directory to `frontend`.
-   - Add the 3 environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_API_URL`).
-   - Click Deploy.
-2. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for your live presentation and demonstration!
+1. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for live presentation and demonstration to brokerage executives at `https://finfluence-theta.vercel.app`.
+2. **Collect Student Feedback**: Share `https://finfluence-theta.vercel.app` with science, arts, and commerce college cohorts to test engagement, quiz completion rates, and streak retention.
+3. **Expand Card Library**: Plan Track 3 concepts (Mutual Fund Direct vs Regular, Taxation & LTCG, Advanced Options & Futures basics).
