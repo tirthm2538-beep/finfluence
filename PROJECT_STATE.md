@@ -84,12 +84,32 @@ commerce students, and to pitch to a software/trading company CEO.
     - UTC calendar day arithmetic to prevent timezone drift.
     - Real-time bookmarking toggles synced to `bookmarks` table.
   - "Continue as Guest / Pitch Demo" 1-click option guarantees 100% demo-readiness with `localStorage` persistence.
-- Practice Portfolio Simulator (Phase 6):
+- Practice Portfolio Simulator (Phase 6 & Phase 14):
   - ₹1,00,000 starting virtual balance with Supabase `virtual_portfolios` persistence.
-  - 6 fictional simulated instruments (`SIM-INDEX50`, `SIM-CHAIBYTES`, `SIM-GREENWATT`, etc.) with random-walk price fluctuations.
-  - Instant BUY and SELL simulated trading with full portfolio accounting and P&L calculation.
-  - Responsive SVG trend chart displaying portfolio value over time.
-  - Strategic CEO partnership pitch modal.
+  - **19 Realistic Fictional Instruments Across 8 Sectors**:
+    - Indices: `SIM-NIFTY50X` (Bharat 50 ETF), `SIM-NEXTMID` (NextGen 100 Midcap)
+    - IT & Tech: `SIM-BYTECRAFT` (Cloud Solutions), `SIM-CYBERKAVACH` (Infosec Systems), `SIM-DATASTRIDE` (Analytics & AI)
+    - Banking & Finance: `SIM-APEXBANK` (Retail & Corp Bank), `SIM-VAULTNBFC` (Credit & Lending), `SIM-FINPULSE` (Digital Payments)
+    - FMCG & Consumer: `SIM-DESIHARVEST` (Foods & Agri), `SIM-CHAIBREWS` (Beverages), `SIM-VELVETCARE` (Personal Care)
+    - Auto & EV: `SIM-VOLTEV` (Electric Motors), `SIM-GATIAUTO` (Commercial Vehicles)
+    - Pharma & Healthcare: `SIM-AUSHADH` (Formulations & Generics), `SIM-SANJEEV` (Hospital Networks)
+    - Energy & Infra: `SIM-GREENWATT` (Clean Energy), `SIM-URJAGRID` (Power Transmission), `SIM-SETUINFRA` (Highways & Ports)
+    - Commodities: `SIM-SKYLINE` (Real Estate REIT), `SIM-AURUMGOLD` (Sovereign Gold ETF)
+  - **TradingView Lightweight Charts (`lightweight-charts@^5.3.0`)**:
+    - Interactive 45-day historical OHLCV chart per stock with Candlestick and Area/Line modes.
+    - Volume histogram series aligned below price action.
+    - Live crosshair tooltip with dynamic Open, High, Low, Close, and Volume hover readout.
+    - Dynamic responsive resizing (`ResizeObserver`) and automatic Light / Dark theme palette switching.
+  - **Realistic Seeded OHLCV Candlestick Engine (`portfolioService.ts`)**:
+    - Mulberry32 seeded deterministic PRNG for reproducible 45-day trading history per stock.
+    - Assigned distinct financial character: beta ($\beta$ 0.45 to 1.70), annual volatility (14% to 48%), and sector cyclical swings.
+  - **Interactive Stock Detail & Practice Order Ticket Modal (`StockDetailModal.tsx`)**:
+    - 52-week high/low, day range, volatility beta stats, and educational FinFluence concept tie-in.
+    - Real-time BUY / SELL practice order ticket with quantity presets (`+1`, `+5`, `+10`, `Max/All`) and balance checks.
+  - **Watchlist Navigation & Filters**:
+    - 10 sector filter chips (`All Sectors (20)`, `Indices (2)`, `IT & Tech (3)`, `Banking & Finance (3)`, etc.) with live counts.
+    - Real-time instant search bar matching symbol, company name, or sector.
+  - Strategic CEO partnership pitch modal with student CAC reduction thesis.
 - CEO Pitch & Partner Guide:
   - Full pitch guide created in `PITCH_DECK_GUIDE.md` detailing the 3-minute live walkthrough, student CAC reduction thesis, and brokerage executive partner hooks.
 - Deployment Status:
@@ -134,6 +154,14 @@ Quiz: What's the main idea behind a SIP?
   - **Vertical Rhythm Optimization**: Compacted card vertical padding, title sizing (`text-lg lg:text-xl`), and quiz option buttons (`min-h-[32px] lg:min-h-[34px]`) so that cards fit completely on screen with generous clearance (+149px to +218px at 1366x768, and +27px to +78px even on 1366x628) with zero initial scrolling required.
   - **Cross-Card Verification at 1366x768**: Tested and verified across multiple cards with varying text lengths (Card #1 SIP: +218px clearance, Card #2 Compounding: +200px clearance, Card #6 Credit Score: +180px clearance, Card #17 Support & Resistance Dark Mode: +162px clearance).
   - **Custom Sleek Scrollbars**: Added `.scrollbar-thin` utility classes to `globals.css` providing a subtle, modern scrollbar across webkit and Firefox.
+- **Phase 14 (TradingView Lightweight Charts, 19 Fictional Sector Instruments & OHLC Candlestick Engine)**: COMPLETE & VERIFIED.
+  - **TradingView Integration**: Installed and configured `lightweight-charts@^5.3.0` powering responsive candlestick charts, volume histograms, and area line charts with FinFluence dynamic theme palette adaptation.
+  - **19 Simulated Market Instruments**: Expanded from 6 to 19 distinct fictional instruments strictly using the mandatory `SIM-` prefix across 8 Indian sectors (Indices, IT & Tech, Banking & Finance, FMCG & Consumer, Auto & EV, Pharma & Healthcare, Energy & Infra, Commodities).
+  - **Realistic Seeded OHLCV Candlestick Engine**: Built Mulberry32 seeded deterministic PRNG generating 45 trading days of realistic historical daily candles with distinct beta, volatility, and sector cycles.
+  - **Sector Filters & Search**: Implemented 10 sector chips with dynamic counts and instant search bar matching tickers, names, and sectors.
+  - **Interactive Stock Detail Modal (`StockDetailModal.tsx`)**: Full TradingView chart modal with candlestick/area toggles, live crosshair OHLC tooltip, 52W range, volatility character, educational concept tie-in, and practice BUY/SELL order ticket with quick quantity buttons (`+1`, `+5`, `+10`, `Max/All`).
+  - **Single Responsive Instance Architecture**: Refactored `src/app/page.tsx` so that `PortfolioView` renders once as a unified responsive component across all viewport sizes, eliminating duplicate React component trees.
+  - **Production Build & Verification**: Next.js 16.4.5 Turbopack production build succeeds with 0 errors; visually verified with screenshots in Light and Dark mode on both Desktop (1366x768) and Mobile (390x844).
 
 ## Next steps
 1. **Execute CEO Pitch**: Use `PITCH_DECK_GUIDE.md` for live presentation and demonstration to brokerage executives at `https://finfluence-theta.vercel.app`.

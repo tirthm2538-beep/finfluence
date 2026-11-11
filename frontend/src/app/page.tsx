@@ -244,42 +244,37 @@ export default function Home() {
       {/* Short, non-blocking polished entrance intro */}
       {showIntro && <OpeningAnimation onFinish={() => setShowIntro(false)} />}
 
-      {/* DESKTOP DASHBOARD (>= 1024px) */}
-      <div className="hidden lg:flex w-full h-full flex-col overflow-hidden">
-        {activeView === 'portfolio' ? (
-          <PortfolioView
-            user={user}
-            onBackToFeed={() => setActiveView('feed')}
-          />
-        ) : (
-          <DesktopStoryDashboard
-            cards={cards}
-            user={user}
-            onSignOut={handleSignOut}
-            onOpenPortfolio={() => setActiveView('portfolio')}
-            dataSource={dataSource}
-            onSyncBackend={fetchCardsFromBackend}
-            isSyncing={loading}
-          />
-        )}
-      </div>
+      {activeView === 'portfolio' ? (
+        <PortfolioView
+          user={user}
+          onBackToFeed={() => setActiveView('feed')}
+        />
+      ) : (
+        <>
+          {/* DESKTOP DASHBOARD (>= 1024px) */}
+          <div className="hidden lg:flex w-full h-full flex-col overflow-hidden">
+            <DesktopStoryDashboard
+              cards={cards}
+              user={user}
+              onSignOut={handleSignOut}
+              onOpenPortfolio={() => setActiveView('portfolio')}
+              dataSource={dataSource}
+              onSyncBackend={fetchCardsFromBackend}
+              isSyncing={loading}
+            />
+          </div>
 
-      {/* MOBILE PHONE FEED (< 1024px) */}
-      <div className="flex lg:hidden w-full max-w-full h-full flex-col overflow-hidden">
-        {activeView === 'portfolio' ? (
-          <PortfolioView
-            user={user}
-            onBackToFeed={() => setActiveView('feed')}
-          />
-        ) : (
-          <StoryFeed
-            cards={cards}
-            user={user}
-            onSignOut={handleSignOut}
-            onOpenPortfolio={() => setActiveView('portfolio')}
-          />
-        )}
-      </div>
+          {/* MOBILE PHONE FEED (< 1024px) */}
+          <div className="flex lg:hidden w-full max-w-full h-full flex-col overflow-hidden">
+            <StoryFeed
+              cards={cards}
+              user={user}
+              onSignOut={handleSignOut}
+              onOpenPortfolio={() => setActiveView('portfolio')}
+            />
+          </div>
+        </>
+      )}
     </main>
   );
 }

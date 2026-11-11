@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { AuthUser } from '../../lib/supabase';
 import {
   UserPortfolio,
   MarketInstrument,
+  MarketSector,
 } from '../../types/portfolio';
 import {
   loadPortfolio,
@@ -13,6 +14,7 @@ import {
   getSimulatedMarketInstruments,
 } from '../../lib/portfolioService';
 import { PortfolioChart } from './PortfolioChart';
+import { StockDetailModal } from './StockDetailModal';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import {
   Wallet,
@@ -31,6 +33,9 @@ import {
   AlertTriangle,
   BookOpen,
   TrendingUp,
+  Search,
+  BarChart2,
+  Filter,
 } from 'lucide-react';
 
 interface PortfolioViewProps {
@@ -38,16 +43,28 @@ interface PortfolioViewProps {
   onBackToFeed: () => void;
 }
 
+const SECTOR_OPTIONS: { id: MarketSector | 'All'; label: string; icon: string }[] = [
+  { id: 'All', label: 'All Sectors', icon: '🌐' },
+  { id: 'Indices', label: 'Indices', icon: '📊' },
+  { id: 'IT & Tech', label: 'IT & Tech', icon: '💻' },
+  { id: 'Banking & Finance', label: 'Banking & Finance', icon: '🏦' },
+  { id: 'FMCG & Consumer', label: 'FMCG & Consumer', icon: '🛒' },
+  { id: 'Auto & EV', label: 'Auto & EV', icon: '⚡' },
+  { id: 'Pharma & Health', label: 'Pharma & Health', icon: '💊' },
+  { id: 'Energy & Power', label: 'Energy & Power', icon: '☀️' },
+  { id: 'Infra & Realty', label: 'Infra & Realty', icon: '🏗️' },
+  { id: 'Commodities', label: 'Commodities', icon: '🪙' },
+];
+
 export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
   const [portfolio, setPortfolio] = useState<UserPortfolio | null>(null);
   const [marketInstruments, setMarketInstruments] = useState<MarketInstrument[]>([]);
-  const [activeTab, setActiveTab] = useState<'holdings' | 'watchlist'>('watchlist');
-  const [selectedInstrument, setSelectedInstrument] = useState<MarketInstrument | null>(null);
-  const [orderType, setOrderType] = useState<'BUY' | 'SELL'>('BUY');
-  const [orderQty, setOrderQty] = useState<number>(1);
-  const [orderStatus, setOrderStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'watchlist' | 'holdings'>('watchlist');
+  const [selectedSector, setSelectedSector] = useState<MarketSector | 'All'>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [detailInstrument, setDetailInstrument] = useState<MarketInstrument | null>(null);
   const [showPitchModal, setShowPitchModal] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     loadPortfolio(user).then((p) => {
@@ -55,6 +72,34 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
       setMarketInstruments(getSimulatedMarketInstruments());
     });
   }, [user]);
+
+  // Monitor theme changes
+  useEffect(() => {
+    const checkDark = () => {
+      if (typeof document !== 'undefined') {
+        setIsDark(document.documentElement.classList.contains('dark'));
+      }
+    };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Filtered market instruments
+  const filteredInstruments = useMemo(() => {
+    return marketInstruments.filter((inst) => {
+      if (selectedSector !== 'All' && inst.sector !== selectedSector) return false;
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const matchSymbol = inst.symbol.toLowerCase().includes(query);
+        const matchName = inst.name.toLowerCase().includes(query);
+        const matchSector = inst.sector.toLowerCase().includes(query);
+        return matchSymbol || matchName || matchSector;
+      }
+      return true;
+    });
+  }, [marketInstruments, selectedSector, searchQuery]);
 
   if (!portfolio) {
     return (
@@ -68,7 +113,7 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
     );
   }
 
-  // Calculate live portfolio summary
+  // Live portfolio summary calculations
   const totalHoldingsValue = portfolio.holdings.reduce((sum, h) => sum + h.currentValue, 0);
   const totalInvestedValue = portfolio.holdings.reduce((sum, h) => sum + h.investedValue, 0);
   const netWorth = portfolio.cashBalance + totalHoldingsValue;
@@ -76,31 +121,12 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
   const totalPnlPercent = totalInvestedValue > 0 ? (totalPnl / totalInvestedValue) * 100 : 0;
   const isPnlPositive = totalPnl >= 0;
 
-  const handleOpenTrade = (instrument: MarketInstrument, type: 'BUY' | 'SELL') => {
-    setSelectedInstrument(instrument);
-    setOrderType(type);
-    setOrderQty(1);
-    setOrderStatus(null);
-  };
-
-  const handleExecuteOrder = async () => {
-    if (!selectedInstrument || orderQty <= 0) return;
-    setIsSubmitting(true);
-    setOrderStatus(null);
-
-    const res = await executeOrder(user, portfolio, selectedInstrument.symbol, orderType, orderQty);
-
-    setIsSubmitting(false);
+  const handleExecuteTrade = async (symbol: string, type: 'BUY' | 'SELL', qty: number) => {
+    const res = await executeOrder(user, portfolio, symbol, type, qty);
     if (res.success) {
       setPortfolio(res.portfolio);
-      setOrderStatus({ type: 'success', message: res.message });
-      setTimeout(() => {
-        setSelectedInstrument(null);
-        setOrderStatus(null);
-      }, 1500);
-    } else {
-      setOrderStatus({ type: 'error', message: res.message });
     }
+    return { success: res.success, message: res.message };
   };
 
   const handleReset = async () => {
@@ -112,97 +138,93 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
 
   return (
     <div className="relative w-full h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] overflow-hidden select-none">
-      {/* Top Header */}
-      <header className="relative z-20 flex items-center justify-between px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5 lg:py-3.5 border-b border-[#e5e1d5] bg-white/90 backdrop-blur-md flex-shrink-0 dark:border-slate-800/80 dark:bg-slate-900/70">
+      {/* 1. Top Header */}
+      <header className="relative z-20 flex items-center justify-between px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 border-b border-[#e5e1d5] bg-white/90 backdrop-blur-md flex-shrink-0 dark:border-slate-800/80 dark:bg-slate-900/70">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-emerald-600/20">
             <Briefcase className="w-4 h-4 lg:w-5 lg:h-5 text-white stroke-[2.5]" />
           </div>
-          <div className="min-w-0">
+          <div>
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <h1 className="text-xs sm:text-base lg:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+              <span className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white">
                 Practice Portfolio
-              </h1>
-              <span className="text-[9px] lg:text-[10px] font-bold bg-amber-500/20 text-amber-800 px-2 py-0.5 rounded-full border border-amber-500/30 uppercase dark:text-amber-300 flex-shrink-0">
-                ₹1L Sandbox
+              </span>
+              <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-800 border border-emerald-500/30 px-2 py-0.5 rounded-full dark:text-emerald-300">
+                ₹1,00,000 Sandbox
               </span>
             </div>
-            <p className="text-[10px] lg:text-xs text-slate-500 dark:text-slate-400 truncate hidden xs:block">
-              Zero-risk simulated trading &bull; Fictional assets &bull; CEO demo ready
+            <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 font-medium hidden sm:block">
+              Risk-Free Virtual Trading with TradingView Charts &bull; Zero Real Money
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <ThemeToggle compact={true} />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
 
           <button
             onClick={handleReset}
-            title="Reset Portfolio to ₹1,00,000"
-            className="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 bg-[#f5f3ec] hover:bg-[#ede9dc] border border-[#e3decb] text-xs flex items-center gap-1.5 transition-colors cursor-pointer dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:text-white"
+            title="Reset sandbox to ₹1,00,000"
+            className="flex items-center gap-1 text-[11px] font-bold text-slate-600 hover:text-rose-600 bg-[#f5f3ec] hover:bg-[#ede9dc] border border-[#e3decb] px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-300 dark:hover:text-rose-400"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline font-semibold">Reset ₹1L</span>
+            <span className="hidden md:inline">Reset Sandbox</span>
           </button>
 
           <button
             onClick={onBackToFeed}
-            className="px-3 sm:px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/20 flex items-center gap-1.5 cursor-pointer"
+            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-sm shadow-emerald-600/20"
           >
             <BookOpen className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Feed</span>
+            <span>Story Cards</span>
           </button>
         </div>
       </header>
 
-      {/* Educational Disclaimer Banner */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 px-3 sm:px-6 lg:px-8 py-1.5 flex items-center gap-2 text-[10px] sm:text-xs text-amber-900 dark:text-amber-300/90 flex-shrink-0">
-        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-        <span className="truncate">
-          <strong>EDUCATIONAL SIMULATION ONLY:</strong> All assets, pricing, and balances are 100% fictional. No real money or trading advice.
-        </span>
-      </div>
-
-      {/* Main Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3 py-3 sm:px-6 sm:py-4 lg:px-8 lg:py-6 flex flex-col min-w-0">
-        <div className="w-full max-w-6xl mx-auto flex flex-col lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start space-y-4 lg:space-y-0">
-          {/* LEFT COLUMN: Summary Card, Chart, Cash/Invested, Partner Callout */}
+      {/* 2. Main Content Grid */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 lg:p-6 scrollbar-thin">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+          {/* LEFT COLUMN: Net Worth & Capital Summary */}
           <div className="w-full lg:col-span-5 flex flex-col gap-3.5">
-            {/* Net Worth & Balance Card */}
-            <div className="w-full bg-gradient-to-br from-white via-[#faf8f2] to-[#f5f2e7] border border-[#e3decb] rounded-2xl p-4 sm:p-5 shadow-sm relative overflow-hidden dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 dark:border-slate-800">
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-                <span className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-300">
-                  <PieChart className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Simulated Net Worth</span>
+            {/* Portfolio Summary Card */}
+            <div className="w-full bg-gradient-to-br from-white via-[#faf8f2] to-[#f5f2e7] border border-[#e3decb] rounded-3xl p-4 sm:p-5 shadow-xs relative overflow-hidden dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950 dark:border-slate-800">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                  Total Practice Net Worth
                 </span>
-                <span className="text-emerald-800 font-bold text-[10px] bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 dark:text-emerald-300">
-                  Active Virtual Demo
+                <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-full dark:text-emerald-300">
+                  Simulated
                 </span>
               </div>
 
-              <div className="flex items-baseline justify-between mb-3">
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
-                    ₹{netWorth.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs mt-1">
-                    <span className="text-slate-500 dark:text-slate-400 font-medium">Total Return:</span>
-                    <span
-                      className={`flex items-center font-bold ${
-                        isPnlPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-                      }`}
-                    >
-                      {isPnlPositive ? (
-                        <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                      ) : (
-                        <ArrowDownRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                      )}
-                      {isPnlPositive ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { maximumFractionDigits: 2 })} (
-                      {isPnlPositive ? '+' : ''}
-                      {totalPnlPercent.toFixed(2)}%)
-                    </span>
-                  </div>
-                </div>
+              {/* Net Worth Big Number */}
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
+                  ₹{netWorth.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                </span>
+                <span
+                  className={`text-xs sm:text-sm font-bold flex items-center ${
+                    isPnlPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {isPnlPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+                  {isPnlPositive ? '+' : ''}
+                  {((netWorth - 100000) / 1000).toFixed(2)}% Overall
+                </span>
+              </div>
+
+              {/* Unrealized PnL badge */}
+              <div className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white/70 border border-[#e3decb] dark:bg-slate-950/60 dark:border-slate-800/80 mb-3">
+                <span className="text-slate-500 dark:text-slate-400 font-semibold">Active Returns (P&L):</span>
+                <span
+                  className={`font-black ${
+                    isPnlPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {isPnlPositive ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { maximumFractionDigits: 2 })} (
+                  {isPnlPositive ? '+' : ''}
+                  {totalPnlPercent.toFixed(2)}%)
+                </span>
               </div>
 
               {/* Sparkline Performance Chart */}
@@ -255,7 +277,7 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
 
           {/* RIGHT COLUMN: Market Watchlist & Active Holdings */}
           <div className="w-full lg:col-span-7 flex flex-col gap-3.5">
-            {/* Tab Toggle: Watchlist vs Holdings */}
+            {/* View Switcher: Market Assets vs Holdings */}
             <div className="flex items-center gap-1 bg-[#ede9dc] p-1 rounded-xl border border-[#e3decb] text-xs font-bold dark:bg-slate-900 dark:border-slate-800">
               <button
                 onClick={() => setActiveTab('watchlist')}
@@ -282,81 +304,140 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
               </button>
             </div>
 
-            {/* Tab 1: Simulated Market Assets */}
+            {/* TAB 1: Simulated Market Assets */}
             {activeTab === 'watchlist' && (
-              <div className="flex flex-col gap-2.5 min-w-0 pb-4">
-                {marketInstruments.map((inst) => {
-                  const holding = portfolio.holdings.find((h) => h.symbol === inst.symbol);
-                  const isPositive = inst.change24h >= 0;
+              <div className="flex flex-col gap-3 min-w-0 pb-4">
+                {/* Search Bar & Sector Filter */}
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by ticker, company, or sector (e.g. BYTECRAFT, Banking, EV)..."
+                      className="w-full bg-white border border-[#e3decb] rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:placeholder-slate-500"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-2 text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
 
-                  return (
-                    <div
-                      key={inst.symbol}
-                      className="bg-white border border-[#e3decb] hover:border-emerald-600/40 rounded-2xl p-3 sm:p-3.5 flex flex-col gap-2 transition-all shadow-xs dark:bg-slate-900/90 dark:border-slate-800/90 dark:hover:border-slate-700/90"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5 sm:gap-2">
-                            <span className="font-black text-sm sm:text-base text-slate-900 dark:text-white">{inst.symbol}</span>
-                            <span className="text-[9px] text-amber-800 bg-amber-500/15 border border-amber-500/25 px-1.5 py-0.5 rounded-full font-bold dark:text-amber-300">
-                              Simulated
-                            </span>
-                            {holding && (
-                              <span className="text-[9px] font-bold text-emerald-800 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 dark:text-emerald-300">
-                                {holding.quantity} Units Owned
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-xs text-slate-500 dark:text-slate-400 truncate block mt-0.5 font-medium">
-                            {inst.name}
+                  {/* Horizontal Sector Filter Chips */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                    {SECTOR_OPTIONS.map((sec) => {
+                      const isSelected = selectedSector === sec.id;
+                      const count =
+                        sec.id === 'All'
+                          ? marketInstruments.length
+                          : marketInstruments.filter((m) => m.sector === sec.id).length;
+
+                      return (
+                        <button
+                          key={sec.id}
+                          onClick={() => setSelectedSector(sec.id)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1 border ${
+                            isSelected
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                              : 'bg-white border-[#e3decb] text-slate-700 hover:bg-[#ede9dc] dark:bg-slate-950 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800'
+                          }`}
+                        >
+                          <span>{sec.icon}</span>
+                          <span>{sec.label}</span>
+                          <span className={`text-[10px] px-1 rounded-full ${isSelected ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                            {count}
                           </span>
-                        </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                        <div className="text-right flex-shrink-0">
-                          <div className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
-                            ₹{inst.price.toFixed(2)}
+                {/* Instruments List */}
+                {filteredInstruments.length === 0 ? (
+                  <div className="bg-white border border-[#e3decb] rounded-2xl p-6 text-center text-xs text-slate-500 dark:bg-slate-900 dark:border-slate-800">
+                    No simulated stocks found matching &ldquo;{searchQuery}&rdquo;.
+                  </div>
+                ) : (
+                  filteredInstruments.map((inst) => {
+                    const holding = portfolio.holdings.find((h) => h.symbol === inst.symbol);
+                    const isPositive = inst.change24h >= 0;
+
+                    return (
+                      <div
+                        key={inst.symbol}
+                        onClick={() => setDetailInstrument(inst)}
+                        className="bg-white border border-[#e3decb] hover:border-emerald-600/50 hover:shadow-md rounded-2xl p-3 sm:p-3.5 flex flex-col gap-2 transition-all cursor-pointer group dark:bg-slate-900/90 dark:border-slate-800/90 dark:hover:border-emerald-500/50"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                              <span className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                                {inst.symbol}
+                              </span>
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#e3decb] dark:border-slate-700">
+                                {inst.sector}
+                              </span>
+                              {holding && (
+                                <span className="text-[9px] font-bold text-emerald-800 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 dark:text-emerald-300">
+                                  {holding.quantity} Units Owned
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-600 dark:text-slate-400 truncate block mt-0.5 font-medium">
+                              {inst.name}
+                            </span>
                           </div>
-                          <div
-                            className={`text-xs font-bold flex items-center justify-end ${
-                              isPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-                            }`}
-                          >
-                            {isPositive ? '+' : ''}
-                            {inst.changePercent24h.toFixed(2)}%
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* Educational Concept Tie-in tag */}
-                      <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#e3decb] dark:border-slate-800/60 text-xs">
-                        <span className="text-slate-500 dark:text-slate-400 truncate max-w-sm">
-                          💡 <strong className="text-slate-700 dark:text-slate-300 font-semibold">{inst.conceptTieIn}</strong>
-                        </span>
-
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                          {holding && (
-                            <button
-                              onClick={() => handleOpenTrade(inst, 'SELL')}
-                              className="px-3 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-colors cursor-pointer text-xs dark:bg-rose-500/20 dark:hover:bg-rose-500/30 dark:text-rose-300 dark:border-rose-500/30"
+                          <div className="text-right flex-shrink-0">
+                            <div className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                              ₹{inst.price.toFixed(2)}
+                            </div>
+                            <div
+                              className={`text-xs font-bold flex items-center justify-end ${
+                                isPositive ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                              }`}
                             >
-                              Sell
+                              {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+                              {isPositive ? '+' : ''}
+                              {inst.changePercent24h.toFixed(2)}%
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Bottom Row: Concept & TradingView Action Button */}
+                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#e3decb] dark:border-slate-800/60 text-xs">
+                          <span className="text-slate-500 dark:text-slate-400 truncate text-[11px]">
+                            💡 <strong className="text-slate-700 dark:text-slate-300 font-semibold">{inst.conceptTieIn}</strong>
+                          </span>
+
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDetailInstrument(inst);
+                              }}
+                              className="px-3 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-600/30 transition-colors cursor-pointer text-xs flex items-center gap-1 shadow-2xs dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 dark:text-emerald-300"
+                            >
+                              <BarChart2 className="w-3.5 h-3.5" />
+                              <span>View Chart & Trade</span>
                             </button>
-                          )}
-                          <button
-                            onClick={() => handleOpenTrade(inst, 'BUY')}
-                            className="px-3.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors cursor-pointer text-xs shadow-xs"
-                          >
-                            Buy
-                          </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             )}
 
-            {/* Tab 2: User Holdings */}
+            {/* TAB 2: User Active Holdings */}
             {activeTab === 'holdings' && (
               <div className="flex flex-col gap-2.5 min-w-0 pb-4">
                 {portfolio.holdings.length === 0 ? (
@@ -381,7 +462,8 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
                     return (
                       <div
                         key={h.symbol}
-                        className="bg-white border border-[#e3decb] rounded-2xl p-3.5 flex flex-col gap-2 shadow-xs dark:bg-slate-900 dark:border-slate-800"
+                        onClick={() => marketItem && setDetailInstrument(marketItem)}
+                        className="bg-white border border-[#e3decb] hover:border-emerald-600/40 rounded-2xl p-3.5 flex flex-col gap-2 shadow-xs transition-all cursor-pointer dark:bg-slate-900 dark:border-slate-800"
                       >
                         <div className="flex items-center justify-between">
                           <div>
@@ -416,20 +498,17 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
 
                           <div className="flex items-center gap-1.5">
                             {marketItem && (
-                              <>
-                                <button
-                                  onClick={() => handleOpenTrade(marketItem, 'SELL')}
-                                  className="px-3 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-colors cursor-pointer text-xs dark:bg-rose-500/20 dark:hover:bg-rose-500/30 dark:text-rose-300 dark:border-rose-500/30"
-                                >
-                                  Sell
-                                </button>
-                                <button
-                                  onClick={() => handleOpenTrade(marketItem, 'BUY')}
-                                  className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors cursor-pointer text-xs shadow-xs"
-                                >
-                                  Buy More
-                                </button>
-                              </>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDetailInstrument(marketItem);
+                                }}
+                                className="px-3 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-600/30 transition-colors cursor-pointer text-xs flex items-center gap-1 dark:bg-emerald-950/60 dark:text-emerald-300"
+                              >
+                                <BarChart2 className="w-3.5 h-3.5" />
+                                <span>Chart & Manage</span>
+                              </button>
                             )}
                           </div>
                         </div>
@@ -443,140 +522,23 @@ export function PortfolioView({ user, onBackToFeed }: PortfolioViewProps) {
         </div>
       </div>
 
-      {/* Trade Execution Modal Dialog */}
-      {selectedInstrument && (
-        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-md bg-white border border-[#e3decb] rounded-3xl p-5 flex flex-col gap-3.5 shadow-2xl animate-scale-up dark:bg-slate-900 dark:border-slate-800">
-            <div className="flex items-center justify-between pb-2 border-b border-[#e3decb] dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black text-slate-900 dark:text-white">{selectedInstrument.symbol}</span>
-                <span className="text-[10px] text-amber-800 bg-amber-500/15 px-2 py-0.5 rounded-full font-bold dark:text-amber-300">Simulated Order</span>
-              </div>
-              <button
-                onClick={() => setSelectedInstrument(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-900 rounded-lg cursor-pointer hover:bg-[#f5f3ec] dark:hover:text-white dark:hover:bg-slate-800"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Buy vs Sell Mode Toggle */}
-            <div className="grid grid-cols-2 gap-1.5 bg-[#ede9dc] p-1 rounded-xl border border-[#e3decb] dark:bg-slate-950 dark:border-slate-800">
-              <button
-                onClick={() => setOrderType('BUY')}
-                className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  orderType === 'BUY'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-700 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                BUY (Long)
-              </button>
-              <button
-                onClick={() => setOrderType('SELL')}
-                className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  orderType === 'SELL'
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'text-slate-700 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                SELL (Close)
-              </button>
-            </div>
-
-            {/* Live Simulated Price & Available Capital */}
-            <div className="flex items-center justify-between text-xs text-slate-600 bg-[#f5f3ec] p-3 rounded-xl border border-[#e3decb] dark:bg-slate-950/80 dark:border-slate-800/80 dark:text-slate-400">
-              <div>
-                <span>Simulated Price: </span>
-                <strong className="text-slate-900 dark:text-white font-bold">₹{selectedInstrument.price.toFixed(2)}</strong>
-              </div>
-              <div>
-                {orderType === 'BUY' ? (
-                  <span>
-                    Virtual Cash: <strong className="text-emerald-700 dark:text-emerald-400 font-bold">₹{portfolio.cashBalance.toFixed(0)}</strong>
-                  </span>
-                ) : (
-                  <span>
-                    Owned:{' '}
-                    <strong className="text-slate-900 dark:text-white font-bold">
-                      {portfolio.holdings.find((h) => h.symbol === selectedInstrument.symbol)?.quantity ?? 0}
-                    </strong>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Quantity Selector */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-700 dark:text-slate-300 font-bold">Quantity (Units):</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min="1"
-                  value={orderQty}
-                  onChange={(e) => setOrderQty(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="flex-1 bg-white border border-[#e3decb] rounded-xl px-3 py-2 text-sm text-slate-900 font-mono text-center focus:outline-none focus:border-emerald-600 dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:focus:border-emerald-500"
-                />
-                {[1, 5, 10, 25].map((qty) => (
-                  <button
-                    key={qty}
-                    type="button"
-                    onClick={() => setOrderQty(qty)}
-                    className="px-2.5 py-2 rounded-xl bg-[#f5f3ec] hover:bg-[#ede9dc] border border-[#e3decb] text-xs text-slate-800 font-bold cursor-pointer dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-300"
-                  >
-                    +{qty}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Total Order Calculation */}
-            <div className="flex items-center justify-between text-sm pt-2 border-t border-[#e3decb] dark:border-slate-800">
-              <span className="text-slate-500 text-xs font-medium">Total Virtual Amount:</span>
-              <span className="font-black text-slate-950 dark:text-white text-base">
-                ₹{(orderQty * selectedInstrument.price).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            {/* Status Message */}
-            {orderStatus && (
-              <div
-                className={`p-2.5 rounded-xl text-xs flex items-center gap-2 ${
-                  orderStatus.type === 'success'
-                    ? 'bg-emerald-50 border border-emerald-600/30 text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-300'
-                    : 'bg-rose-50 border border-rose-500/30 text-rose-900 dark:bg-rose-500/10 dark:text-rose-300'
-                }`}
-              >
-                {orderStatus.type === 'success' ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                ) : (
-                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
-                )}
-                <span className="font-semibold">{orderStatus.message}</span>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              onClick={handleExecuteOrder}
-              disabled={isSubmitting}
-              className={`w-full py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                orderType === 'BUY'
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25'
-                  : 'bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/25'
-              }`}
-            >
-              <span>Execute Simulated {orderType} Order</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+      {/* 3. TradingView Stock Detail & Order Ticket Modal */}
+      {detailInstrument && (
+        <StockDetailModal
+          instrument={detailInstrument}
+          holding={portfolio.holdings.find((h) => h.symbol === detailInstrument.symbol)}
+          cashBalance={portfolio.cashBalance}
+          isOpen={Boolean(detailInstrument)}
+          onClose={() => setDetailInstrument(null)}
+          onExecuteTrade={handleExecuteTrade}
+          isDark={isDark}
+        />
       )}
 
-      {/* CEO Pitch Partner Modal Dialog */}
+      {/* 4. CEO Pitch Partner Modal Dialog */}
       {showPitchModal && (
-        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="w-full max-w-lg bg-white border border-[#e3decb] rounded-3xl p-6 flex flex-col gap-4 shadow-2xl relative dark:bg-slate-900 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white border border-[#e3decb] rounded-3xl p-6 flex flex-col gap-4 shadow-2xl relative dark:bg-slate-900 dark:border-slate-800 text-[var(--foreground)]">
             <button
               onClick={() => setShowPitchModal(false)}
               className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-900 rounded-lg cursor-pointer hover:bg-[#f5f3ec] dark:hover:text-white dark:hover:bg-slate-800"

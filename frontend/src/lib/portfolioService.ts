@@ -5,6 +5,7 @@ import {
   PortfolioTransaction,
   PortfolioHistoryPoint,
   MarketInstrument,
+  OhlcCandle,
   BASE_SIMULATED_INSTRUMENTS,
   INITIAL_CASH_BALANCE,
 } from '../types/portfolio';
@@ -13,32 +14,173 @@ const STORAGE_KEY_PREFIX = 'finfluence_practice_portfolio_';
 
 const getStorageKey = (userId: string) => `${STORAGE_KEY_PREFIX}${userId}`;
 
-// In-memory cache for the current session's simulated random-walk prices
+// In-memory cache for generated instruments so they remain stable across re-renders
 let cachedSimulatedMarket: MarketInstrument[] | null = null;
 let lastMarketGenTime = 0;
 
 /**
- * Generates simulated random-walk market prices with slight fluctuations on each visit/session
+ * Deterministic pseudo-random number generator (Mulberry32)
+ */
+function createSeededRandom(seed: number) {
+  let s = seed >>> 0;
+  return function () {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function stringToSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Generates 45 trading days of realistic historical OHLCV candlestick data
+ */
+function generateStockCandles(
+  symbol: string,
+  basePrice: number,
+  volatilityLevel: 'Low' | 'Medium' | 'High',
+  beta: number
+): { candles: OhlcCandle[]; currentPrice: number; prevClose: number; dayHigh: number; dayLow: number; fiftyTwoHigh: number; fiftyTwoLow: number } {
+  const seed = stringToSeed(symbol);
+  const rand = createSeededRandom(seed);
+
+  const numDays = 45;
+  const candles: OhlcCandle[] = [];
+
+  // Volatility scaling
+  const volMultiplier = volatilityLevel === 'High' ? 0.032 : volatilityLevel === 'Medium' ? 0.019 : 0.010;
+
+  // Generate trading dates going forward up to today
+  const today = new Date();
+  const dates: string[] = [];
+  let d = new Date(today);
+  d.setDate(d.getDate() - Math.floor(numDays * 1.5));
+
+  while (dates.length < numDays) {
+    const dayOfWeek = d.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // Mon - Fri only
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      dates.push(`${yyyy}-${mm}-${dd}`);
+    }
+    d.setDate(d.getDate() + 1);
+  }
+
+  let runningPrice = basePrice * (0.88 + rand() * 0.1); // start slightly varied around base
+  let highestHigh = runningPrice;
+  let lowestLow = runningPrice;
+
+  for (let i = 0; i < numDays; i++) {
+    const dateStr = dates[i];
+
+    // Sector drift + cyclical swing
+    const cycle = Math.sin((i / 8) + seed % 7) * 0.015;
+    const trendDrift = (beta - 1.0) * 0.003 + 0.001; // slight positive growth drift
+    const randomReturn = (rand() - 0.49) * 2 * volMultiplier;
+    const dailyReturn = trendDrift + cycle + randomReturn;
+
+    const gap = (rand() - 0.5) * 0.008; // small overnight gap
+    const openPrice = Number((runningPrice * (1 + gap)).toFixed(2));
+    const closePrice = Number((Math.max(5, runningPrice * (1 + dailyReturn))).toFixed(2));
+
+    const wickUpper = rand() * volMultiplier * 1.2;
+    const wickLower = rand() * volMultiplier * 1.2;
+
+    const candleHigh = Number((Math.max(openPrice, closePrice) * (1 + wickUpper)).toFixed(2));
+    const candleLow = Number((Math.max(4, Math.min(openPrice, closePrice) * (1 - wickLower))).toFixed(2));
+
+    // Realistic volume: spikes on high movement days
+    const baseVol = 15000 + Math.floor(rand() * 45000);
+    const returnMagnitude = Math.abs(dailyReturn);
+    const volume = Math.floor(baseVol * (1 + returnMagnitude * 20));
+
+    candles.push({
+      time: dateStr,
+      open: openPrice,
+      high: candleHigh,
+      low: candleLow,
+      close: closePrice,
+      volume,
+    });
+
+    if (candleHigh > highestHigh) highestHigh = candleHigh;
+    if (candleLow < lowestLow) lowestLow = candleLow;
+
+    runningPrice = closePrice;
+  }
+
+  const latestCandle = candles[candles.length - 1];
+  const prevCandle = candles[candles.length - 2];
+
+  const currentPrice = latestCandle.close;
+  const prevClose = prevCandle ? prevCandle.close : latestCandle.open;
+  const dayHigh = latestCandle.high;
+  const dayLow = latestCandle.low;
+
+  return {
+    candles,
+    currentPrice,
+    prevClose,
+    dayHigh,
+    dayLow,
+    fiftyTwoHigh: Number((highestHigh * 1.08).toFixed(2)),
+    fiftyTwoLow: Number((lowestLow * 0.92).toFixed(2)),
+  };
+}
+
+/**
+ * Generates simulated market instruments with realistic character, OHLC history, and sector organization
  */
 export function getSimulatedMarketInstruments(): MarketInstrument[] {
   const now = Date.now();
-  // Refresh price noise every 30 seconds
-  if (cachedSimulatedMarket && now - lastMarketGenTime < 30000) {
+  // Refresh price noise every 20 seconds
+  if (cachedSimulatedMarket && now - lastMarketGenTime < 20000) {
     return cachedSimulatedMarket;
   }
 
-  const generated = BASE_SIMULATED_INSTRUMENTS.map((inst, index) => {
-    // Deterministic random drift between -3% and +3%
-    const randomFactor = Math.sin((now / 15000) + index * 1.7) * 0.02 + ((Math.random() - 0.5) * 0.02);
-    const price = Number((inst.basePrice * (1 + randomFactor)).toFixed(2));
-    const change24h = Number((price - inst.basePrice).toFixed(2));
-    const changePercent24h = Number(((change24h / inst.basePrice) * 100).toFixed(2));
+  const generated: MarketInstrument[] = BASE_SIMULATED_INSTRUMENTS.map((inst, index) => {
+    const candleData = generateStockCandles(inst.symbol, inst.basePrice, inst.volatilityLevel, inst.beta);
+
+    // Minor intraday live jitter on current price
+    const jitter = Math.sin((now / 10000) + index * 1.8) * 0.004;
+    const livePrice = Number((candleData.currentPrice * (1 + jitter)).toFixed(2));
+    const change24h = Number((livePrice - candleData.prevClose).toFixed(2));
+    const changePercent24h = Number(((change24h / candleData.prevClose) * 100).toFixed(2));
+
+    // Update the last candle close with the live price
+    const updatedCandles = [...candleData.candles];
+    if (updatedCandles.length > 0) {
+      const last = updatedCandles[updatedCandles.length - 1];
+      updatedCandles[updatedCandles.length - 1] = {
+        ...last,
+        close: livePrice,
+        high: Math.max(last.high, livePrice),
+        low: Math.min(last.low, livePrice),
+      };
+    }
 
     return {
       ...inst,
-      price,
+      price: livePrice,
       change24h,
       changePercent24h,
+      dayHigh: Math.max(candleData.dayHigh, livePrice),
+      dayLow: Math.min(candleData.dayLow, livePrice),
+      fiftyTwoWeekHigh: candleData.fiftyTwoHigh,
+      fiftyTwoWeekLow: candleData.fiftyTwoLow,
+      candles: updatedCandles,
+      isSimulated: true,
     };
   });
 
@@ -91,7 +233,6 @@ export function recomputePortfolioValuation(portfolio: UserPortfolio): UserPortf
       { date: 'Today', value: Number(currentNetWorth.toFixed(2)) },
     ];
   } else {
-    // Update the last point ('Today') with the current live value
     const lastPoint = history[history.length - 1];
     if (lastPoint && lastPoint.date === 'Today') {
       history[history.length - 1] = { date: 'Today', value: Number(currentNetWorth.toFixed(2)) };
